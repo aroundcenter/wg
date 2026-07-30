@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Walter Geer III — Creative leader, inventor and entrepreneur</title>
+<meta name="description" content="Creative leader, inventor and entrepreneur building brands, experiences and ideas that move culture and business." />
+
+<!-- Neue Haas Unica W1G -->
+<link rel="stylesheet" href="https://use.typekit.net/dbr5emm.css">
+
+<style>
+/* ============================================================
+   1. ARTWORK
+   Images live in ./images and are referenced by path so the
+   browser can cache them separately.
+   ============================================================ */
+:root{
+  --img-project: url("images/project-1.webp");
+}
+
+/* ============================================================
+   2. TOKENS
+   Every fluid value interpolates linearly between the two
+   artboards: 390px (mobile) -> 1440px (desktop), 1050px span.
+   ============================================================ */
+:root{
+  /* colour */
+  --ink:        #1a1a17;
+  --muted:      #595959;
+  --paper:      #ffffff;
+  --card-base:  #e0dfd8;
+  --rule:       #d9d9d9;
+
+  /* type */
+  --font: "neue-haas-unica-w1g","neue-haas-unica","Neue Haas Unica W1G",
+          "Neue Haas Unica","Helvetica Neue",Helvetica,Arial,sans-serif;
+
+  /* fluid layout — min @390, max @1440 */
+  --gutter:    clamp(20px, calc(20px + 84 * (100vw - 390px) / 1050), 104px);
+  --nav-px:    clamp(20px, calc(20px + 36 * (100vw - 390px) / 1050), 56px);
+  --nav-py:    clamp(12px, calc(12px + 16 * (100vw - 390px) / 1050), 28px);
+  --identity:  clamp(16px, calc(16px +  2 * (100vw - 390px) / 1050), 18px);
+  --lockup-pt: clamp(64px, calc(64px + 66 * (100vw - 390px) / 1050), 130px);
+  --h1:        clamp(31px, calc(31px + 30 * (100vw - 390px) / 1050), 61px);
+  --hero-h:    clamp(649px,calc(649px + 206 * (100vw - 390px) / 1050), 855px);
+  --hero-gap:  clamp(8px, calc(8px + 8 * (100vw - 390px) / 1050), 16px);
+  /* The photo is drawn at its natural aspect and offset, exactly as the two
+     artboards do it: 1217.4px wide @390 and 1440px wide @1440, then full-bleed.
+     Reproduces Figma's -74.6/-150.5 desktop and -290.2/-170 mobile offsets. */
+  --hero-w:    max(100vw, clamp(1217.4px, calc(1217.4px + 222.6 * (100vw - 390px) / 1050), 1440px));
+  --hero-x:    min(calc(-0.0518 * 100vw), clamp(-290.2px, calc(-290.2px + 215.6 * (100vw - 390px) / 1050), -74.6px));
+  --hero-y:    min(calc(-0.10452 * 100vw), clamp(-170px, calc(-170px + 19.5 * (100vw - 390px) / 1050), -150.5px));
+  --about-fs:  clamp(16px, calc(16px +  6 * (100vw - 390px) / 1050), 22px);
+  --about-gap: clamp(40px, calc(40px + 28 * (100vw - 390px) / 1050), 68px);
+  --about-pt:  clamp(0px,  calc(       104 * (100vw - 390px) / 1050), 104px);
+  --about-pb:  clamp(40px, calc(40px + 64 * (100vw - 390px) / 1050), 104px);
+
+  /* carousel */
+  --cw:       clamp(320px, calc(320px + 70 * (100vw - 390px) / 1050), 390px);
+  --card-gap: clamp(20px, calc(20px + 20 * (100vw - 390px) / 1050), 40px);
+  --cards-py: 80px;
+
+  /* card internals, held as exact ratios of the card width so that
+     390px => desktop artboard and 320px => mobile artboard */
+  --ch:        calc(var(--cw) * 1.482051);  /* 578 / 390 */
+  --cr:        calc(var(--cw) * 0.061538);  /*  24 / 390 */
+  --cp-t:      calc(var(--cw) * 0.102564);  /*  40 / 390 */
+  --cp-b:      calc(var(--cw) * 0.143590);  /*  56 / 390 */
+  --cp-x:      calc(var(--cw) * 0.061538);  /*  24 / 390 */
+  /* Type no longer scales with the card. The mobile artboard now sets its own
+     uniform sizes across all four cards (12 / 25 / 14) against the desktop
+     14 / 31 / 16, so these interpolate on viewport instead of card width. */
+  --c-title:   clamp(25px, calc(25px + 6 * (100vw - 390px) / 1050), 31px);
+  --c-desc:    clamp(14px, calc(14px + 2 * (100vw - 390px) / 1050), 16px);
+  --c-tag:     clamp(12px, calc(12px + 2 * (100vw - 390px) / 1050), 14px);
+  --c-tag-pad: calc(var(--cw) * 0.020513);  /*   8 / 390 */
+  --c-tag-r:   calc(var(--cw) * 0.005128);  /*   2 / 390 */
+  --c-gap:     calc(var(--cw) * 0.020513);  /*   8 / 390 */
+  /* CTA is a fixed 40px target holding a 20px glyph at BOTH artboards —
+     only the inset changes: 8px on mobile, 16px on desktop. */
+  --c-cta:       40px;
+  --c-cta-icon:  20px;
+  --c-cta-inset: clamp(8px, calc(8px + 8 * (100vw - 390px) / 1050), 16px);
+
+  /* motion */
+  --ease-out: cubic-bezier(.22,.61,.36,1);
+}
+
+/* ============================================================
+   3. BASE
+   ============================================================ */
+*,*::before,*::after{ box-sizing:border-box; }
+
+html{
+  scroll-behavior:smooth;
+  -webkit-text-size-adjust:100%;
+}
+html,body{
+  overflow-x:clip;              /* page never scrolls sideways — only the carousel does */
+  max-width:100%;
+}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--font);
+  font-weight:400;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+img{ display:block; border:0; }
+h1,h2,h3,h4,h5,h6,p{ margin:0; }
+
+a{ color:inherit; }
+:focus-visible{
+  outline:2px solid var(--ink);
+  outline-offset:3px;
+  border-radius:2px;
+}
+
+.visually-hidden{
+  position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+  overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;
+}
+
+/* ============================================================
+   4. NAV
+   ============================================================ */
+.nav{
+  position:sticky; top:0; z-index:100;
+  background:rgba(255,255,255,.72);
+  -webkit-backdrop-filter:saturate(180%) blur(20px);
+  backdrop-filter:saturate(180%) blur(20px);
+  display:flex; align-items:center;
+  height:75px;
+  padding-inline:var(--nav-px);
+}
+.topbar{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:16px; width:100%;
+}
+.identity{
+  font-weight:700;
+  font-size:var(--identity);
+  letter-spacing:-0.01em;
+  color:var(--ink);
+  text-decoration:none;
+  white-space:nowrap;
+  background:none; border:0; padding:0; cursor:pointer;
+  font-family:inherit;
+}
+.nav-links{
+  display:flex; align-items:center; justify-content:flex-end; gap:4px;
+}
+.nav-link{
+  display:inline-flex; align-items:center; justify-content:center;
+  padding:0 10px;
+  font-size:16px;
+  font-weight:400;
+  color:var(--muted);
+  text-decoration:none;
+  white-space:nowrap;
+  background:none; border:0; cursor:pointer;
+  font-family:inherit;
+  transition:color 200ms var(--ease-out);
+}
+.nav-link:hover{ color:var(--ink); }
+
+/* hamburger */
+.menu-toggle{
+  display:none;
+  width:24px; height:24px;
+  padding:0; border:0; background:none; cursor:pointer;
+  color:var(--ink);
+}
+.menu-toggle img{ width:24px; height:24px; display:block; }
+
+/* mobile menu sheet */
+.menu-sheet{
+  position:fixed; inset:0; z-index:99;
+  background:var(--paper);
+  display:flex; flex-direction:column; justify-content:center;
+  gap:8px;
+  padding:0 var(--nav-px);
+  opacity:0; visibility:hidden;
+  transition:opacity 260ms var(--ease-out), visibility 260ms;
+}
+.menu-sheet[data-open="true"]{ opacity:1; visibility:visible; }
+.menu-sheet .nav-link{
+  justify-content:flex-start;
+  padding:14px 0;
+  font-size:28px;
+  color:var(--ink);
+}
+
+/* ============================================================
+   5. LOCKUP
+   ============================================================ */
+.lockup{
+  padding:var(--lockup-pt) var(--gutter) 0;
+}
+.lockup h1{
+  margin:0;
+  max-width:1010px;
+  font-size:var(--h1);
+  font-weight:900;
+  line-height:1.02;
+  letter-spacing:-0.02em;
+  color:var(--ink);
+  text-wrap:pretty;
+}
+
+/* ============================================================
+   6. HERO
+   ============================================================ */
+.hero{
+  position:relative;
+  /* the artboard heights up to 1440, then hold the 1440 aspect so the crop
+     never tightens on ultrawide and squeezes the figure */
+  height:max(var(--hero-h), calc(100vw * 855 / 1440));
+  margin-top:var(--hero-gap);      /* the h1 and the photo can never meet */
+  overflow:hidden;
+  background:#fff;
+}
+.hero__img{
+  position:absolute;
+  left:var(--hero-x); top:var(--hero-y);
+  width:var(--hero-w); height:auto;   /* height:auto keeps the aspect exact */
+  max-width:none;
+}
+
+/* ============================================================
+   7. CAROUSEL
+   ============================================================ */
+.cards{
+  padding:var(--cards-py) 0;
+  scroll-margin-top:calc(var(--nav-py) * 2 + 32px);
+}
+.carousel{
+  overflow-x:auto;
+  overflow-y:hidden;
+  overscroll-behavior-x:contain;      /* no browser back-swipe */
+  scroll-behavior:auto;               /* settling is done in JS, not by the UA */
+  scrollbar-width:none;
+  -ms-overflow-style:none;
+  -webkit-overflow-scrolling:touch;
+  cursor:grab;
+  /* The scroller has to clip vertically (overflow-x:auto forces it), so the
+     hover shadow needs room inside the scrollport. 80px matches the section's
+     own padding exactly, so this box never overhangs its neighbours. */
+  padding-block:80px;
+  margin-block:-80px;
+}
+.carousel::-webkit-scrollbar{ display:none; }
+.carousel.is-dragging{ cursor:grabbing; }
+.carousel.is-dragging .card{ transition:none; }
+
+.track{
+  position:relative;
+  display:flex;
+  align-items:flex-start;
+  gap:var(--card-gap);
+  padding-inline:var(--gutter);
+  width:max-content;
+}
+
+.card{
+  position:relative;
+  flex:0 0 var(--cw);
+  width:var(--cw);
+  height:var(--ch);
+  border-radius:var(--cr);
+  background:var(--card-base);
+  padding:var(--cp-t) var(--cp-x) var(--cp-b);
+  display:flex; flex-direction:column; align-items:flex-start;
+  justify-content:space-between;
+  text-decoration:none;
+  box-shadow:0 0 0 rgba(26,26,23,0);
+  transform:scale(1);
+  transform-origin:center;
+  transition:transform 460ms var(--ease-out), box-shadow 460ms var(--ease-out);
+  will-change:transform;
+}
+.card__media{
+  position:absolute; inset:0; z-index:0;
+  border-radius:inherit;
+  overflow:hidden;
+  pointer-events:none;
+  background-color:var(--card-base);
+  background-image:var(--img-project);
+  background-size:cover;
+  background-position:center;
+}
+/* stands in for the Figma overlay layer: keeps the white type legible */
+.card__media::after{
+  content:"";
+  position:absolute; inset:0;
+  background:linear-gradient(180deg,
+    rgba(0,0,0,.10)   0%,
+    rgba(0,0,0,0)    26%,
+    rgba(0,0,0,0)    44%,
+    rgba(0,0,0,.72) 100%);
+}
+
+.card__tag{
+  position:relative; z-index:1;
+  display:inline-flex;
+  padding:var(--c-tag-pad);
+  border:1px solid #fff;
+  border-radius:var(--c-tag-r);
+  background:rgba(255,255,255,.9);
+  backdrop-filter:blur(5px);
+  -webkit-backdrop-filter:blur(5px);
+  color:#000;
+  font-size:var(--c-tag);
+  line-height:.7509;               /* Figma cap-height trim: 10.512 / 14 */
+  white-space:nowrap;
+}
+.card__bottom{
+  position:relative; z-index:1;
+  display:flex; flex-direction:column; gap:var(--c-gap);
+  width:100%;
+  color:#fff;
+}
+.card__title{
+  font-size:var(--c-title);
+  font-weight:500;
+  line-height:1.2;
+  letter-spacing:-0.005em;
+}
+.card__desc{
+  font-size:var(--c-desc);
+  font-weight:400;
+  line-height:1.25;
+}
+.card__cta{
+  position:absolute; z-index:1;
+  right:var(--c-cta-inset); bottom:var(--c-cta-inset);
+  width:var(--c-cta); height:var(--c-cta);
+  display:flex; align-items:center; justify-content:center;
+  transition:transform 460ms var(--ease-out);
+}
+.card__cta img{
+  width:var(--c-cta-icon); height:var(--c-cta-icon);
+  display:block;
+}
+
+/* rollover: slight scale + depth shadow (shadow exists ONLY on hover) */
+@media (hover:hover) and (pointer:fine){
+  .card:hover,
+  .card:focus-visible{
+    transform:scale(1.025);
+    box-shadow:
+      0 24px 56px -16px rgba(26,26,23,.45),
+      0 10px 24px -12px rgba(26,26,23,.30);
+    z-index:2;
+  }
+  .card:hover .card__cta{ transform:translate(2px,-2px); }
+}
+
+/* ============================================================
+   8. ABOUT + FOOTER
+   ============================================================ */
+.about{
+  padding:var(--about-pt) var(--gutter) var(--about-pb);
+  display:flex; flex-direction:column; align-items:flex-start;
+  gap:var(--about-gap);
+  scroll-margin-top:calc(var(--nav-py) * 2 + 32px);
+}
+.about__body{
+  max-width:619px;
+  color:var(--muted);
+  font-size:var(--about-fs);
+  line-height:1.42;
+  letter-spacing:-0.012em;
+}
+.about__body p + p{ margin-top:1.42em; }
+.about__body strong{ font-weight:700; }
+.about__body p:first-child{ font-weight:700; }
+
+.rule{
+  width:100%; height:1px;
+  background:var(--rule);
+  border:0; margin:0;
+}
+.footer{
+  display:flex; align-items:flex-start; justify-content:space-between;
+  width:100%; min-height:24px;
+}
+.footer p{
+  font-size:14px;
+  letter-spacing:0.02em;
+  color:var(--muted);
+}
+
+/* ============================================================
+   9. TOAST
+   ============================================================ */
+.toast{
+  position:fixed; left:50%; bottom:32px; z-index:200;
+  transform:translate(-50%,16px);
+  padding:12px 20px;
+  border-radius:999px;
+  background:var(--ink);
+  color:#fff;
+  font-size:15px;
+  letter-spacing:-0.01em;
+  opacity:0; pointer-events:none;
+  transition:opacity 260ms var(--ease-out), transform 260ms var(--ease-out);
+}
+.toast[data-show="true"]{ opacity:1; transform:translate(-50%,0); }
+
+/* ============================================================
+   10. BREAKPOINTS
+   ============================================================ */
+@media (max-width:720px){
+  .nav-links{ display:none; }
+  .menu-toggle{ display:block; }
+  .nav{ height:60px; }
+}
+
+/* ============================================================
+   11. REDUCED MOTION
+   ============================================================ */
+@media (prefers-reduced-motion:reduce){
+  html{ scroll-behavior:auto; }
+  *,*::before,*::after{
+    animation-duration:.01ms !important;
+    transition-duration:.01ms !important;
+  }
+  .card:hover{ transform:none; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ================= NAV ================= -->
+<header class="nav" data-node-id="1:3">
+  <div class="topbar">
+    <a class="identity" href="/" id="home-link">Walter Geer III</a>
+
+    <nav class="nav-links" aria-label="Primary">
+      <a class="nav-link" href="#work">Work</a>
+      <a class="nav-link" href="#about">About</a>
+      <a class="nav-link" href="#" data-action="resume">Resume</a>
+      <a class="nav-link" href="#" data-action="contact">Contact</a>
+    </nav>
+
+    <button class="menu-toggle" id="menu-toggle" aria-expanded="false" aria-controls="menu-sheet" aria-label="Open menu">
+      <img src="https://www.figma.com/api/mcp/asset/02c96d52-3623-4eb0-a4a2-944f6e0bc571" alt="" aria-hidden="true" data-fallback="menu" />
+    </button>
+  </div>
+</header>
+
+<div class="menu-sheet" id="menu-sheet" data-open="false" aria-hidden="true">
+  <a class="nav-link" href="#work">Work</a>
+  <a class="nav-link" href="#about">About</a>
+  <a class="nav-link" href="#" data-action="resume">Resume</a>
+  <a class="nav-link" href="#" data-action="contact">Contact</a>
+</div>
+
+<main>
+
+  <!-- ================= LOCKUP ================= -->
+  <section class="lockup" data-node-id="1:1068">
+    <h1>Creative leader, inventor and entrepreneur building brands, experiences and ideas that move culture and business.</h1>
+  </section>
+
+  <!-- ================= HERO ================= -->
+  <section class="hero" data-node-id="1:1072" aria-hidden="true">
+    <img class="hero__img" id="hero-img" alt="" src="images/hero.webp" />
+  </section>
+
+  <!-- ================= WORK / CAROUSEL ================= -->
+  <section class="cards" id="work" data-node-id="1:834" aria-label="Selected work">
+    <h2 class="visually-hidden">Selected work</h2>
+
+    <div class="carousel" id="carousel" tabindex="0" role="region" aria-label="Project carousel — scroll, drag or use the arrow keys">
+      <div class="track" id="track">
+
+        <article class="card" data-node-id="1:835">
+          <div class="card__media" aria-hidden="true"></div>
+          <span class="card__tag">Brand Transformation</span>
+          <div class="card__bottom">
+            <h3 class="card__title">Covered California</h3>
+            <p class="card__desc">Reimagining how a public-health marketplace shows up for an entire state.</p>
+          </div>
+          <span class="card__cta" aria-hidden="true">
+            <img alt="" data-fallback="cta" src="data:image/svg+xml,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Cmask%20id%3D%22mask0_9_127%22%20style%3D%22mask-type%3Aalpha%22%20maskUnits%3D%22userSpaceOnUse%22%20x%3D%220%22%20y%3D%220%22%20width%3D%2220%22%20height%3D%2220%22%3E%0A%3Crect%20width%3D%2220%22%20height%3D%2220%22%20fill%3D%22%23D9D9D9%22%2F%3E%0A%3C%2Fmask%3E%0A%3Cg%20mask%3D%22url%28%23mask0_9_127%29%22%3E%0A%3Cpath%20d%3D%22M13.085%2010.8333H3.75V9.20833H13.085L8.81729%204.94063L9.97917%203.75L16.25%2010.0208L10.0208%2016.25L8.85896%2015.0594L13.085%2010.8333Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fg%3E%0A%3C%2Fsvg%3E" />
+          </span>
+        </article>
+
+        <article class="card" data-node-id="1:1177">
+          <div class="card__media" aria-hidden="true"></div>
+          <span class="card__tag">Innovation &amp; Invention</span>
+          <div class="card__bottom">
+            <h3 class="card__title">Skippable Preroll</h3>
+            <p class="card__desc">Turning an annoying advertising constraint into the most famous digital ad format.</p>
+          </div>
+          <span class="card__cta" aria-hidden="true">
+            <img alt="" data-fallback="cta" src="data:image/svg+xml,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Cmask%20id%3D%22mask0_9_127%22%20style%3D%22mask-type%3Aalpha%22%20maskUnits%3D%22userSpaceOnUse%22%20x%3D%220%22%20y%3D%220%22%20width%3D%2220%22%20height%3D%2220%22%3E%0A%3Crect%20width%3D%2220%22%20height%3D%2220%22%20fill%3D%22%23D9D9D9%22%2F%3E%0A%3C%2Fmask%3E%0A%3Cg%20mask%3D%22url%28%23mask0_9_127%29%22%3E%0A%3Cpath%20d%3D%22M13.085%2010.8333H3.75V9.20833H13.085L8.81729%204.94063L9.97917%203.75L16.25%2010.0208L10.0208%2016.25L8.85896%2015.0594L13.085%2010.8333Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fg%3E%0A%3C%2Fsvg%3E" />
+          </span>
+        </article>
+
+        <article class="card" data-node-id="1:1184">
+          <div class="card__media" aria-hidden="true"></div>
+          <span class="card__tag">Brand Building</span>
+          <div class="card__bottom">
+            <h3 class="card__title">LifeSpace</h3>
+            <p class="card__desc">Giving independent living a more relevant and emotionally compelling story.</p>
+          </div>
+          <span class="card__cta" aria-hidden="true">
+            <img alt="" data-fallback="cta" src="data:image/svg+xml,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Cmask%20id%3D%22mask0_9_127%22%20style%3D%22mask-type%3Aalpha%22%20maskUnits%3D%22userSpaceOnUse%22%20x%3D%220%22%20y%3D%220%22%20width%3D%2220%22%20height%3D%2220%22%3E%0A%3Crect%20width%3D%2220%22%20height%3D%2220%22%20fill%3D%22%23D9D9D9%22%2F%3E%0A%3C%2Fmask%3E%0A%3Cg%20mask%3D%22url%28%23mask0_9_127%29%22%3E%0A%3Cpath%20d%3D%22M13.085%2010.8333H3.75V9.20833H13.085L8.81729%204.94063L9.97917%203.75L16.25%2010.0208L10.0208%2016.25L8.85896%2015.0594L13.085%2010.8333Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fg%3E%0A%3C%2Fsvg%3E" />
+          </span>
+        </article>
+
+        <article class="card" data-node-id="2:3">
+          <div class="card__media" aria-hidden="true"></div>
+          <span class="card__tag">Brand Building</span>
+          <div class="card__bottom">
+            <h3 class="card__title">LifeSpace</h3>
+            <p class="card__desc">Giving independent living a more relevant and emotionally compelling story.</p>
+          </div>
+          <span class="card__cta" aria-hidden="true">
+            <img alt="" data-fallback="cta" src="data:image/svg+xml,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Cmask%20id%3D%22mask0_9_127%22%20style%3D%22mask-type%3Aalpha%22%20maskUnits%3D%22userSpaceOnUse%22%20x%3D%220%22%20y%3D%220%22%20width%3D%2220%22%20height%3D%2220%22%3E%0A%3Crect%20width%3D%2220%22%20height%3D%2220%22%20fill%3D%22%23D9D9D9%22%2F%3E%0A%3C%2Fmask%3E%0A%3Cg%20mask%3D%22url%28%23mask0_9_127%29%22%3E%0A%3Cpath%20d%3D%22M13.085%2010.8333H3.75V9.20833H13.085L8.81729%204.94063L9.97917%203.75L16.25%2010.0208L10.0208%2016.25L8.85896%2015.0594L13.085%2010.8333Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fg%3E%0A%3C%2Fsvg%3E" />
+          </span>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ABOUT + FOOTER ================= -->
+  <section class="about" id="about" data-node-id="1:139">
+    <h2 class="visually-hidden">About</h2>
+
+    <div class="about__body">
+      <p>You’re not going to read the typical bio here.</p>
+      <p>I’m not going to tell you about all the awards I’ve won. I’m not even going to talk about where I’ve worked or the brands I’ve touched. You can find all of that on my résumé.</p>
+      <p>I’d rather tell you what moves me—and why I do what I do.</p>
+      <p>I care about people. Period.</p>
+      <p>Ad Age has called me an activist. I’m proud of that. Not because I’m interested in labels, but because I’ve never believed creativity should sit quietly on the sidelines.</p>
+      <p>I believe the best ideas can change how people see themselves, how brands show up in the world and what society believes is possible. That belief has led me from telling stories and building brands to inventing products, designing experiences and creating platforms that bring people together.</p>
+      <p>My work has always been rooted in people. Not one type of person, but people as a whole. People whose truths have been overlooked. People whose experiences have been misunderstood. People who deserve to see themselves represented with honesty, complexity and humanity.</p>
+      <p>The awards are meaningful. But they’ve never been the reason I do this.</p>
+      <p>I do it because creativity can create access. It can open doors, shift perspectives and give someone an opportunity they may never have imagined for themselves. Sometimes that happens through product innovation. Sometimes through technology. And sometimes simply by telling a powerful truth through a story that represents the many cultures and people who make up our world.</p>
+      <p>I’m a creative leader, an inventor and an entrepreneur. But I’m also a husband, a father and someone who cares deeply about the world we are leaving behind.</p>
+      <p>At the end of my life, I don’t want to be remembered only for the work I made or the awards I won. I want to be remembered for leaving the world better than I found it, and for creating opportunities for a multitude of people to do the same.</p>
+    </div>
+
+    <hr class="rule" />
+
+    <footer class="footer">
+      <p>©2026 Walter Geer III</p>
+    </footer>
+  </section>
+
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ==========================================================
+     CONFIG — set these two before you ship
+     ========================================================== */
+  var EMAIL      = "hello@waltergeer.com";
+  var RESUME_URL = "assets/Walter-Geer-III-Resume.pdf";
+
+  // The two nav icons are still Figma exports and expire ~7 days out.
+  // If either fails to load, these vectors take over so nothing breaks.
+  var ICON_FALLBACK = {
+    cta:  "data:image/svg+xml,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Cmask%20id%3D%22mask0_9_127%22%20style%3D%22mask-type%3Aalpha%22%20maskUnits%3D%22userSpaceOnUse%22%20x%3D%220%22%20y%3D%220%22%20width%3D%2220%22%20height%3D%2220%22%3E%0A%3Crect%20width%3D%2220%22%20height%3D%2220%22%20fill%3D%22%23D9D9D9%22%2F%3E%0A%3C%2Fmask%3E%0A%3Cg%20mask%3D%22url%28%23mask0_9_127%29%22%3E%0A%3Cpath%20d%3D%22M13.085%2010.8333H3.75V9.20833H13.085L8.81729%204.94063L9.97917%203.75L16.25%2010.0208L10.0208%2016.25L8.85896%2015.0594L13.085%2010.8333Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fg%3E%0A%3C%2Fsvg%3E",
+    menu: "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%231a1a17%22%20stroke-width%3D%221.6%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M3%207h18M3%2012h18M3%2017h18%22%2F%3E%3C%2Fsvg%3E"
+  };
+
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---------- toast ---------- */
+  var toastEl = document.getElementById("toast");
+  var toastTimer;
+  function toast(msg){
+    toastEl.textContent = msg;
+    toastEl.setAttribute("data-show","true");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){
+      toastEl.setAttribute("data-show","false");
+    }, 2600);
+  }
+
+  /* ---------- icon fallbacks ---------- */
+  Array.prototype.forEach.call(document.querySelectorAll("[data-fallback]"), function(img){
+    function swap(){
+      if (img.dataset.swapped) return;
+      img.dataset.swapped = "1";
+      img.src = ICON_FALLBACK[img.dataset.fallback];
+    }
+    img.addEventListener("error", swap);
+    if (img.complete && img.naturalWidth === 0) swap();   // already failed
+  });
+
+  /* ---------- name → reload the homepage ---------- */
+  document.getElementById("home-link").addEventListener("click", function(e){
+    e.preventDefault();
+    window.scrollTo(0,0);
+    window.location.reload();
+  });
+
+  /* ---------- resume download / contact copy ---------- */
+  function downloadResume(){
+    var a = document.createElement("a");
+    a.href = RESUME_URL;
+    a.download = RESUME_URL.split("/").pop();
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+
+    // let the person know if the file isn't there yet
+    if (window.fetch){
+      fetch(RESUME_URL, { method:"HEAD" })
+        .then(function(r){ if(!r.ok) throw 0; })
+        .catch(function(){ toast("Add your PDF at " + RESUME_URL); });
+    }
+  }
+
+  function copyEmail(){
+    function done(){ toast("Copied " + EMAIL); }
+    function fallback(){
+      var t = document.createElement("textarea");
+      t.value = EMAIL;
+      t.setAttribute("readonly","");
+      t.style.cssText = "position:fixed;top:-1000px;opacity:0";
+      document.body.appendChild(t);
+      t.select();
+      try { document.execCommand("copy"); done(); }
+      catch(err){ toast("Copy failed — email " + EMAIL); }
+      t.remove();
+    }
+    if (navigator.clipboard && window.isSecureContext){
+      navigator.clipboard.writeText(EMAIL).then(done, fallback);
+    } else { fallback(); }
+  }
+
+  document.addEventListener("click", function(e){
+    var el = e.target.closest("[data-action]");
+    if(!el) return;
+    e.preventDefault();
+    closeMenu();
+    if (el.dataset.action === "resume")  downloadResume();
+    if (el.dataset.action === "contact") copyEmail();
+  });
+
+  /* ---------- mobile menu ---------- */
+  var toggle = document.getElementById("menu-toggle");
+  var sheet  = document.getElementById("menu-sheet");
+  function openMenu(){
+    sheet.dataset.open = "true";
+    sheet.setAttribute("aria-hidden","false");
+    toggle.setAttribute("aria-expanded","true");
+    toggle.setAttribute("aria-label","Close menu");
+    document.body.style.overflow = "hidden";
+  }
+  function closeMenu(){
+    if (sheet.dataset.open !== "true") return;
+    sheet.dataset.open = "false";
+    sheet.setAttribute("aria-hidden","true");
+    toggle.setAttribute("aria-expanded","false");
+    toggle.setAttribute("aria-label","Open menu");
+    document.body.style.overflow = "";
+  }
+  toggle.addEventListener("click", function(){
+    sheet.dataset.open === "true" ? closeMenu() : openMenu();
+  });
+  sheet.addEventListener("click", function(e){
+    if (e.target.tagName === "A") closeMenu();
+  });
+  document.addEventListener("keydown", function(e){
+    if (e.key === "Escape") closeMenu();
+  });
+
+  /* ==========================================================
+     CAROUSEL — drag, wheel, swipe, and a soft directional settle
+
+     No CSS scroll-snap: the UA's proximity snap was landing at the same time
+     as the JS glide, which is what made it judder, and it yanked you back to
+     the previous card whenever a scroll fell short. Everything below settles
+     in one eased animation, and it only ever moves in the direction you were
+     already going.
+     ========================================================== */
+  var scroller = document.getElementById("carousel");
+  var track    = document.getElementById("track");
+  var cards    = Array.prototype.slice.call(track.querySelectorAll(".card"));
+
+  var rafId = null, settleTimer = null;
+  var gestureFrom = null;              // index the current gesture started on
+
+  function stopAnim(){
+    if (rafId){ cancelAnimationFrame(rafId); rafId = null; }
+  }
+
+  // scrollLeft that parks each card at the left gutter.
+  // offsetLeft ignores transforms, so a hovered (scaled) card can't skew it.
+  function targets(){
+    var max  = scroller.scrollWidth - scroller.clientWidth;
+    var base = cards[0].offsetLeft;
+    return cards.map(function(c){
+      return Math.max(0, Math.min(max, c.offsetLeft - base));
+    });
+  }
+
+  function nearestIndex(pos){
+    var t = targets(), best = 0, bestD = Infinity;
+    t.forEach(function(v, i){
+      var d = Math.abs(v - pos);
+      if (d < bestD){ bestD = d; best = i; }
+    });
+    return best;
+  }
+
+  function step(){
+    var t = targets();
+    return t.length > 1 ? (t[1] - t[0]) : scroller.clientWidth;
+  }
+
+  // remember where a gesture began so the settle can be directional
+  function beginGesture(){
+    stopAnim();
+    clearTimeout(settleTimer);
+    if (gestureFrom === null) gestureFrom = nearestIndex(scroller.scrollLeft);
+  }
+
+  function easeOutCubic(t){ return 1 - Math.pow(1 - t, 3); }
+
+  function glideTo(to){
+    stopAnim();
+    var from  = scroller.scrollLeft;
+    var delta = to - from;
+    if (Math.abs(delta) < 2){ scroller.scrollLeft = Math.round(to); return; }
+    if (reduce){ scroller.scrollLeft = Math.round(to); return; }
+
+    // short corrections stay quick, long throws get room to decelerate
+    var dur   = Math.min(700, Math.max(320, 280 + Math.abs(delta) * 0.55));
+    var start = performance.now();
+
+    (function frame(now){
+      var p = Math.min(1, (now - start) / dur);
+      scroller.scrollLeft = from + delta * easeOutCubic(p);
+      if (p < 1){ rafId = requestAnimationFrame(frame); }
+      else { rafId = null; scroller.scrollLeft = Math.round(to); }
+    })(start);
+  }
+
+  var ADVANCE = 0.18;                  // fraction of a card you must clear to move on
+
+  function settle(projected){
+    var t = targets();
+    if (!t.length){ gestureFrom = null; return; }
+    var origin = gestureFrom === null ? nearestIndex(scroller.scrollLeft) : gestureFrom;
+    var pos    = projected != null ? projected : scroller.scrollLeft;
+    var moved  = (pos - t[origin]) / (step() || 1);
+    var idx;
+
+    if (Math.abs(moved) < ADVANCE){
+      idx = origin;                    // fell short — ease back, never a hard yank
+    } else {
+      var n = Math.max(1, Math.round(Math.abs(moved)));
+      idx = origin + (moved > 0 ? n : -n);
+    }
+    gestureFrom = null;
+    glideTo(t[Math.max(0, Math.min(t.length - 1, idx))]);
+  }
+
+  /* --- pointer drag (mouse / pen); touch keeps its native momentum --- */
+  var dragging = false, dragged = 0, startX = 0, startScroll = 0,
+      lastX = 0, lastT = 0, velocity = 0;
+
+  scroller.addEventListener("pointerdown", function(e){
+    if (e.pointerType === "touch" || e.button !== 0) return;
+    beginGesture();
+    dragging = true; dragged = 0; velocity = 0;
+    startX = lastX = e.clientX;
+    lastT = performance.now();
+    startScroll = scroller.scrollLeft;
+    scroller.classList.add("is-dragging");
+    scroller.setPointerCapture(e.pointerId);
+  });
+
+  scroller.addEventListener("pointermove", function(e){
+    if (!dragging) return;
+    e.preventDefault();
+    var dx = e.clientX - startX;
+    dragged = Math.max(dragged, Math.abs(dx));
+    scroller.scrollLeft = startScroll - dx;
+
+    var now = performance.now(), dt = now - lastT;
+    if (dt > 0){
+      velocity = (lastX - e.clientX) / dt;   // px per ms
+      lastX = e.clientX; lastT = now;
+    }
+  });
+
+  function endDrag(e){
+    if (!dragging) return;
+    dragging = false;
+    scroller.classList.remove("is-dragging");
+    if (e && e.pointerId != null && scroller.hasPointerCapture(e.pointerId)){
+      scroller.releasePointerCapture(e.pointerId);
+    }
+    settle(scroller.scrollLeft + velocity * 130);   // a little throw
+  }
+  scroller.addEventListener("pointerup", endDrag);
+  scroller.addEventListener("pointercancel", endDrag);
+
+  // swallow the click that follows a real drag
+  scroller.addEventListener("click", function(e){
+    if (dragged > 6){ e.preventDefault(); e.stopPropagation(); }
+  }, true);
+
+  /* --- settle once wheel / trackpad / touch momentum has stopped --- */
+  scroller.addEventListener("wheel",      beginGesture, { passive:true });
+  scroller.addEventListener("touchstart", beginGesture, { passive:true });
+
+  scroller.addEventListener("scroll", function(){
+    if (dragging || rafId) return;        // ignore our own animation frames
+    clearTimeout(settleTimer);
+    settleTimer = setTimeout(function(){
+      if (dragging || rafId) return;
+      settle();
+    }, 170);
+  }, { passive:true });
+
+  /* --- keyboard --- */
+  scroller.addEventListener("keydown", function(e){
+    if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+    e.preventDefault();
+    stopAnim();
+    clearTimeout(settleTimer);
+    var t = targets();
+    var i = nearestIndex(scroller.scrollLeft) + (e.key === "ArrowRight" ? 1 : -1);
+    gestureFrom = null;
+    glideTo(t[Math.max(0, Math.min(t.length - 1, i))]);
+  });
+
+  /* --- keep the hover lift honest while the pointer is down --- */
+  window.addEventListener("blur", function(){ dragging = false;
+    scroller.classList.remove("is-dragging"); });
+
+})();
+</script>
+</body>
+</html>
