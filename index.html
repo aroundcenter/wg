@@ -35,6 +35,9 @@
 
   /* fluid layout — min @390, max @1440 */
   --gutter:    clamp(20px, calc(20px + 84 * (100vw - 390px) / 1050), 104px);
+  /* Lockup's left edge and the About column now run wider than the
+     standard gutter at desktop (208px vs 104px); same mobile floor. */
+  --gutter-2x: clamp(20px, calc(20px + 188 * (100vw - 390px) / 1050), 208px);
   --nav-px:    clamp(20px, calc(20px + 36 * (100vw - 390px) / 1050), 56px);
   --nav-py:    clamp(12px, calc(12px + 16 * (100vw - 390px) / 1050), 28px);
   --identity:  clamp(16px, calc(16px +  2 * (100vw - 390px) / 1050), 18px);
@@ -48,7 +51,7 @@
   --hero-w:    max(100vw, clamp(1217.4px, calc(1217.4px + 222.6 * (100vw - 390px) / 1050), 1440px));
   --hero-x:    min(calc(-0.0518 * 100vw), clamp(-290.2px, calc(-290.2px + 215.6 * (100vw - 390px) / 1050), -74.6px));
   --hero-y:    min(calc(-0.10452 * 100vw), clamp(-170px, calc(-170px + 19.5 * (100vw - 390px) / 1050), -150.5px));
-  --about-fs:  clamp(16px, calc(16px +  6 * (100vw - 390px) / 1050), 22px);
+  --about-fs:  clamp(16px, calc(16px +  4 * (100vw - 390px) / 1050), 20px);
   --about-gap: clamp(40px, calc(40px + 28 * (100vw - 390px) / 1050), 68px);
   --about-pt:  clamp(0px,  calc(       104 * (100vw - 390px) / 1050), 104px);
   --about-pb:  clamp(40px, calc(40px + 64 * (100vw - 390px) / 1050), 104px);
@@ -195,7 +198,7 @@ a{ color:inherit; }
    5. LOCKUP
    ============================================================ */
 .lockup{
-  padding:var(--lockup-pt) var(--gutter) 0;
+  padding:var(--lockup-pt) var(--gutter) 0 var(--gutter-2x);
 }
 .lockup h1{
   margin:0;
@@ -301,12 +304,13 @@ a{ color:inherit; }
 }
 /* Cards whose description runs a 3rd line (5–7) would otherwise push
    their title upward under justify-content:space-between, since the
-   bottom block stays anchored to the card's bottom edge. Figma's own
-   source gives these instances a fixed tag-to-title gap instead
-   (371px at the 390px artboard) so every card's title lands at the
-   same y — reproduced here as a ratio of the fluid card width. */
+   bottom block stays anchored to the card's bottom edge. Anchor the
+   tag-to-title gap instead, sized so the title lands at the same y
+   as the 2-line cards' title (derived from their fixed content
+   height, not Figma's literal gap-371 on these instances, which sits
+   ~3px lower than that reference position). */
 .card--tallcopy{ justify-content:flex-start; }
-.card--tallcopy .card__tag{ margin-bottom: calc(var(--cw) * 0.951282); }
+.card--tallcopy .card__tag{ margin-bottom: calc(var(--cw) * 0.944328); }
 
 .card__tag{
   position:relative; z-index:1;
@@ -370,13 +374,13 @@ a{ color:inherit; }
    8. ABOUT + FOOTER
    ============================================================ */
 .about{
-  padding:var(--about-pt) var(--gutter) var(--about-pb);
+  padding:var(--about-pt) var(--gutter-2x) var(--about-pb);
   display:flex; flex-direction:column; align-items:flex-start;
   gap:var(--about-gap);
   scroll-margin-top:calc(var(--nav-py) * 2 + 32px);
 }
 .about__body{
-  max-width:619px;
+  max-width:520px;
   color:var(--muted);
   font-size:var(--about-fs);
   line-height:1.42;
