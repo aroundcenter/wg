@@ -299,6 +299,14 @@ a{ color:inherit; }
   left:12.29%; top:8.41%;
   object-fit:contain;
 }
+/* Cards whose description runs a 3rd line (5–7) would otherwise push
+   their title upward under justify-content:space-between, since the
+   bottom block stays anchored to the card's bottom edge. Figma's own
+   source gives these instances a fixed tag-to-title gap instead
+   (371px at the 390px artboard) so every card's title lands at the
+   same y — reproduced here as a ratio of the fluid card width. */
+.card--tallcopy{ justify-content:flex-start; }
+.card--tallcopy .card__tag{ margin-bottom: calc(var(--cw) * 0.951282); }
 
 .card__tag{
   position:relative; z-index:1;
@@ -527,7 +535,7 @@ a{ color:inherit; }
           </span>
         </article>
 
-        <article class="card" data-node-id="12:368">
+        <article class="card card--tallcopy" data-node-id="12:368">
           <div class="card__media" aria-hidden="true"><img src="images/card-alzheimers.webp" alt="" /></div>
           <span class="card__tag">Experience Design</span>
           <div class="card__bottom">
@@ -539,7 +547,7 @@ a{ color:inherit; }
           </span>
         </article>
 
-        <article class="card" data-node-id="12:381">
+        <article class="card card--tallcopy" data-node-id="12:381">
           <div class="card__media" aria-hidden="true"><img src="images/card-progressive.webp" alt="" /></div>
           <span class="card__tag">Audience Expansion</span>
           <div class="card__bottom">
@@ -551,7 +559,7 @@ a{ color:inherit; }
           </span>
         </article>
 
-        <article class="card" data-node-id="12:394">
+        <article class="card card--tallcopy" data-node-id="12:394">
           <div class="card__media" aria-hidden="true"><img src="images/card-blackweek.webp" alt="" /></div>
           <span class="card__tag">Experiential</span>
           <div class="card__bottom">
