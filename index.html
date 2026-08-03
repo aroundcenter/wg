@@ -70,6 +70,8 @@
   --modal-max-w:    1280px;
   --modal-radius:   40px;
   --modal-close-inset: clamp(16px, calc(16px + 16 * (100vw - 390px) / 1050), 32px);
+  --modal-close-size:  clamp(40px, calc(40px + 20 * (100vw - 390px) / 1050), 60px);
+  --modal-close-icon:  clamp(16px, calc(16px +  8 * (100vw - 390px) / 1050), 24px);
   --modal-hero-py:  clamp(32px, calc(32px + 48 * (100vw - 390px) / 1050), 80px);
   --detail-h:       clamp(24px, calc(24px + 15 * (100vw - 390px) / 1050), 39px);
   --detail-sub:     clamp(18px, calc(18px +  7 * (100vw - 390px) / 1050), 25px);
@@ -544,18 +546,29 @@ html:not(.unlocked) body{ overflow:hidden; }
    ============================================================ */
 html.modal-open body{ overflow:hidden; }
 
+/* Hidden via the native [hidden] attribute — toggled from JS once the
+   close animation finishes — rather than a CSS visibility transition,
+   which was found to stall the sibling .modal's transform transition
+   for its full delay before snapping through the rest of the move. No
+   opacity here either: the modal is a child of this element, and
+   fading the container's opacity would fade the modal along with it. */
 .modal-overlay{
   position:fixed; inset:0; z-index:300;
+}
+.modal-overlay[hidden]{ display:none; }
+
+.modal-overlay__scrim{
+  position:absolute; inset:0;
   /* --card-base, tinted enough to read as a distinct plane behind the
      modal's pure-white surface — a flat white-on-white scrim was too
      close in value to tell the two apart. */
   background:rgba(224,223,216,.78);
   backdrop-filter:blur(20px);
   -webkit-backdrop-filter:blur(20px);
-  opacity:0; visibility:hidden;
-  transition:opacity 380ms var(--ease-out), visibility 380ms;
+  opacity:0;
+  transition:opacity 380ms var(--ease-out);
 }
-.modal-overlay[data-open="true"]{ opacity:1; visibility:visible; }
+.modal-overlay[data-open="true"] .modal-overlay__scrim{ opacity:1; }
 
 .modal{
   position:fixed;
@@ -574,7 +587,7 @@ html.modal-open body{ overflow:hidden; }
 .modal__close{
   position:absolute; z-index:2;
   top:var(--modal-close-inset); right:var(--modal-close-inset);
-  width:60px; height:60px;
+  width:var(--modal-close-size); height:var(--modal-close-size);
   padding:0; border:0; border-radius:50%;
   background:var(--ink);
   cursor:pointer;
@@ -582,7 +595,7 @@ html.modal-open body{ overflow:hidden; }
   transition:opacity 200ms var(--ease-out);
 }
 .modal__close:hover{ opacity:.85; }
-.modal__close svg{ width:24px; height:24px; display:block; }
+.modal__close svg{ width:var(--modal-close-icon); height:var(--modal-close-icon); display:block; }
 
 .modal__scroll{
   flex:1 1 auto;
@@ -840,7 +853,8 @@ html.modal-open body{ overflow:hidden; }
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <!-- ================= PROJECT MODAL ================= -->
-<div class="modal-overlay" id="modal-overlay" data-open="false">
+<div class="modal-overlay" id="modal-overlay" data-open="false" hidden>
+  <div class="modal-overlay__scrim" aria-hidden="true"></div>
   <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" tabindex="-1">
     <button class="modal__close" id="modal-close" aria-label="Close">
       <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -1252,6 +1266,7 @@ html.modal-open body{ overflow:hidden; }
   var detailsEl = document.getElementById("modal-details");
   var closeBtn  = document.getElementById("modal-close");
   var lastFocus = null;
+  var closeTimer = null;
 
   function renderBlock(block){
     var html = '<div class="modal-block">';
@@ -1292,6 +1307,13 @@ html.modal-open body{ overflow:hidden; }
       detailsEl.innerHTML = renderBlock(block);
     }
 
+    clearTimeout(closeTimer);
+    overlay.hidden = false;
+    // Force layout so the browser commits the closed starting position
+    // before the next line flips to open — otherwise both states can
+    // land in the same paint and the transition never plays.
+    void modalEl.offsetHeight;
+
     lastFocus = document.activeElement;
     document.documentElement.classList.add("modal-open");
     overlay.setAttribute("data-open", "true");
@@ -1305,11 +1327,15 @@ html.modal-open body{ overflow:hidden; }
     overlay.setAttribute("data-open", "false");
     document.removeEventListener("keydown", onModalKeydown);
     if (lastFocus && typeof lastFocus.focus === "function") lastFocus.focus();
-    // Wait out the close transition, then tear down the hero content —
-    // an iframe kept alive off-screen would otherwise keep playing audio.
-    // Skip it if a new modal was opened again before the timeout fires.
-    setTimeout(function(){
-      if (overlay.getAttribute("data-open") === "false") heroEl.innerHTML = "";
+    // Wait out the close transition, then hide the overlay and tear down
+    // the hero content — an iframe kept alive off-screen would otherwise
+    // keep playing audio. Skipped if reopened before the timeout fires.
+    clearTimeout(closeTimer);
+    closeTimer = setTimeout(function(){
+      if (overlay.getAttribute("data-open") === "false"){
+        overlay.hidden = true;
+        heroEl.innerHTML = "";
+      }
     }, 450);
   }
 
