@@ -65,8 +65,11 @@
   --about-pb:  clamp(40px, calc(40px + 64 * (100vw - 390px) / 1050), 104px);
 
   /* project modal */
-  --modal-top:      20px;
+  --modal-top:      clamp(16px, calc(16px + 4 * (100vw - 390px) / 1050), 20px);
+  --modal-side:     16px;
+  --modal-max-w:    1280px;
   --modal-radius:   40px;
+  --modal-close-inset: clamp(16px, calc(16px + 16 * (100vw - 390px) / 1050), 32px);
   --modal-hero-py:  clamp(32px, calc(32px + 48 * (100vw - 390px) / 1050), 80px);
   --detail-h:       clamp(24px, calc(24px + 15 * (100vw - 390px) / 1050), 39px);
   --detail-sub:     clamp(18px, calc(18px +  7 * (100vw - 390px) / 1050), 25px);
@@ -385,6 +388,15 @@ a{ color:inherit; }
       0 10px 24px -12px rgba(26,26,23,.30);
     z-index:2;
   }
+  /* Same shadow reads much heavier against this card's light background
+     than against the others' dark photography (simultaneous contrast) —
+     scaled down so it matches the rest at a glance. */
+  .card--light:hover,
+  .card--light:focus-visible{
+    box-shadow:
+      0 24px 56px -16px rgba(26,26,23,.22),
+      0 10px 24px -12px rgba(26,26,23,.14);
+  }
   .card:hover .card__cta{ transform:translate(2px,-2px); }
 }
 
@@ -525,15 +537,18 @@ html:not(.unlocked) body{ overflow:hidden; }
 /* ============================================================
    13. PROJECT MODAL
    Top corners rounded, bottom corners square and flush with the
-   viewport edge: the panel sits var(--modal-top) down from the top
-   and is pinned to left/right/bottom:0, so its own bottom edge IS
-   the viewport's bottom edge.
+   viewport's bottom edge. Below --modal-max-w the panel keeps a
+   constant var(--modal-side) gap on each side; past it, left/right
+   are still set (not auto) so the auto margins split the remaining
+   space evenly once max-width caps the box, centering it.
    ============================================================ */
 html.modal-open body{ overflow:hidden; }
 
 .modal-overlay{
   position:fixed; inset:0; z-index:300;
-  background:rgba(26,26,23,.5);
+  background:rgba(255,255,255,.6);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
   opacity:0; visibility:hidden;
   transition:opacity 280ms var(--ease-out), visibility 280ms;
 }
@@ -541,7 +556,9 @@ html.modal-open body{ overflow:hidden; }
 
 .modal{
   position:fixed;
-  top:var(--modal-top); right:0; bottom:0; left:0;
+  top:var(--modal-top); right:var(--modal-side); bottom:0; left:var(--modal-side);
+  max-width:var(--modal-max-w);
+  margin:0 auto;
   background:var(--paper);
   border-radius:var(--modal-radius) var(--modal-radius) 0 0;
   display:flex; flex-direction:column;
@@ -553,7 +570,7 @@ html.modal-open body{ overflow:hidden; }
 
 .modal__close{
   position:absolute; z-index:2;
-  top:32px; right:var(--gutter);
+  top:var(--modal-close-inset); right:var(--modal-close-inset);
   width:60px; height:60px;
   padding:0; border:0; border-radius:50%;
   background:var(--ink);
@@ -1285,6 +1302,12 @@ html.modal-open body{ overflow:hidden; }
     overlay.setAttribute("data-open", "false");
     document.removeEventListener("keydown", onModalKeydown);
     if (lastFocus && typeof lastFocus.focus === "function") lastFocus.focus();
+    // Wait out the close transition, then tear down the hero content —
+    // an iframe kept alive off-screen would otherwise keep playing audio.
+    // Skip it if a new modal was opened again before the timeout fires.
+    setTimeout(function(){
+      if (overlay.getAttribute("data-open") === "false") heroEl.innerHTML = "";
+    }, 350);
   }
 
   function onModalKeydown(e){
