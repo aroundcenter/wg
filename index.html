@@ -579,7 +579,10 @@ html.modal-open body{ overflow:hidden; }
   border-radius:var(--modal-radius) var(--modal-radius) 0 0;
   display:flex; flex-direction:column;
   overflow:hidden;
-  transform:translateY(64px);
+  /* A true drawer: starts entirely below the viewport (its own full
+     height, so this holds regardless of content length) and slides
+     up into place; closing reverses the same distance back down. */
+  transform:translateY(100%);
   transition:transform 420ms var(--ease-out);
 }
 .modal-overlay[data-open="true"] .modal{ transform:translateY(0); }
