@@ -64,6 +64,15 @@
   --about-pt:  clamp(0px,  calc(       104 * (100vw - 390px) / 1050), 104px);
   --about-pb:  clamp(40px, calc(40px + 64 * (100vw - 390px) / 1050), 104px);
 
+  /* project modal */
+  --modal-top:      20px;
+  --modal-radius:   40px;
+  --modal-hero-py:  clamp(32px, calc(32px + 48 * (100vw - 390px) / 1050), 80px);
+  --detail-h:       clamp(24px, calc(24px + 15 * (100vw - 390px) / 1050), 39px);
+  --detail-sub:     clamp(18px, calc(18px +  7 * (100vw - 390px) / 1050), 25px);
+  --detail-body:    clamp(15px, calc(15px +  3 * (100vw - 390px) / 1050), 18px);
+  --detail-gap:     clamp(32px, calc(32px + 32 * (100vw - 390px) / 1050), 64px);
+
   /* carousel */
   --cw:       clamp(320px, calc(320px + 70 * (100vw - 390px) / 1050), 390px);
   --card-gap: clamp(20px, calc(20px + 20 * (100vw - 390px) / 1050), 40px);
@@ -289,6 +298,7 @@ a{ color:inherit; }
   transform-origin:center;
   transition:transform 460ms var(--ease-out), box-shadow 460ms var(--ease-out);
   will-change:transform;
+  cursor:pointer;
 }
 .card__media{
   position:absolute; inset:0; z-index:0;
@@ -511,6 +521,126 @@ html:not(.unlocked) body{ overflow:hidden; }
   color:#b3261e;
   min-height:1.2em;
 }
+
+/* ============================================================
+   13. PROJECT MODAL
+   Top corners rounded, bottom corners square and flush with the
+   viewport edge: the panel sits var(--modal-top) down from the top
+   and is pinned to left/right/bottom:0, so its own bottom edge IS
+   the viewport's bottom edge.
+   ============================================================ */
+html.modal-open body{ overflow:hidden; }
+
+.modal-overlay{
+  position:fixed; inset:0; z-index:300;
+  background:rgba(26,26,23,.5);
+  opacity:0; visibility:hidden;
+  transition:opacity 280ms var(--ease-out), visibility 280ms;
+}
+.modal-overlay[data-open="true"]{ opacity:1; visibility:visible; }
+
+.modal{
+  position:fixed;
+  top:var(--modal-top); right:0; bottom:0; left:0;
+  background:var(--paper);
+  border-radius:var(--modal-radius) var(--modal-radius) 0 0;
+  display:flex; flex-direction:column;
+  overflow:hidden;
+  transform:translateY(28px);
+  transition:transform 320ms var(--ease-out);
+}
+.modal-overlay[data-open="true"] .modal{ transform:translateY(0); }
+
+.modal__close{
+  position:absolute; z-index:2;
+  top:32px; right:var(--gutter);
+  width:60px; height:60px;
+  padding:0; border:0; border-radius:50%;
+  background:var(--ink);
+  cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition:opacity 200ms var(--ease-out);
+}
+.modal__close:hover{ opacity:.85; }
+.modal__close svg{ width:24px; height:24px; display:block; }
+
+.modal__scroll{
+  flex:1 1 auto;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+}
+
+.modal__lockup{
+  display:flex; flex-direction:column; gap:8px;
+  padding:clamp(56px, calc(56px + 120 * (100vw - 390px) / 1050), 176px) var(--gutter) 0 var(--gutter-2x);
+}
+.modal__eyebrow{
+  font-size:14px; font-weight:700;
+  letter-spacing:.04em;
+  color:var(--muted);
+}
+.modal__title{
+  font-size:var(--h1);
+  font-weight:900;
+  line-height:1.02;
+  letter-spacing:-0.02em;
+  color:var(--ink);
+  text-wrap:balance;
+}
+
+.modal__hero{
+  padding:var(--modal-hero-py) var(--gutter);
+  display:flex; justify-content:center;
+}
+.modal__hero-media{
+  position:relative;
+  width:100%; max-width:1070px;
+  aspect-ratio:16/9;
+  background:#d9d9d9;
+  overflow:hidden;
+}
+.modal__hero-media img{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  object-fit:cover;
+}
+
+.modal__body{
+  display:flex; flex-direction:column; gap:68px;
+  padding:40px var(--gutter-2x) 104px;
+}
+.modal__details{
+  display:flex; flex-direction:column;
+  gap:var(--detail-gap);
+  max-width:520px;
+  color:var(--ink);
+}
+.modal-block{ display:flex; flex-direction:column; gap:8px; }
+.modal-block__h{
+  font-size:var(--detail-h);
+  font-weight:900;
+  line-height:1.42;
+}
+.modal-block__dek{
+  font-size:var(--detail-sub);
+  font-weight:500;
+  color:var(--muted);
+  line-height:1.42;
+}
+.modal-block__p{
+  font-size:var(--detail-body);
+  font-weight:400;
+  line-height:1.42;
+}
+.modal-block__p + .modal-block__p{ margin-top:1.42em; }
+
+.modal__footer{
+  display:flex; align-items:flex-start; justify-content:space-between;
+  width:100%; min-height:24px;
+  font-size:14px; letter-spacing:.02em;
+  color:var(--muted);
+}
 </style>
 </head>
 
@@ -572,7 +702,7 @@ html:not(.unlocked) body{ overflow:hidden; }
     <div class="carousel" id="carousel" tabindex="0" role="region" aria-label="Project carousel — scroll, drag or use the arrow keys">
       <div class="track" id="track">
 
-        <article class="card" data-node-id="1:835">
+        <article class="card" data-node-id="1:835" data-project="covered-california" role="button" tabindex="0" aria-haspopup="dialog">
           <div class="card__media" aria-hidden="true"><img src="images/project-1.webp" alt="" /></div>
           <span class="card__tag">Brand Transformation</span>
           <div class="card__bottom">
@@ -584,7 +714,7 @@ html:not(.unlocked) body{ overflow:hidden; }
           </span>
         </article>
 
-        <article class="card card--light" data-node-id="1:1177">
+        <article class="card card--light" data-node-id="1:1177" data-project="skippable-preroll" role="button" tabindex="0" aria-haspopup="dialog">
           <div class="card__media" aria-hidden="true"><img src="images/card-preroll.webp" alt="" /></div>
           <span class="card__tag">Innovation &amp; Invention</span>
           <div class="card__bottom">
@@ -596,7 +726,7 @@ html:not(.unlocked) body{ overflow:hidden; }
           </span>
         </article>
 
-        <article class="card" data-node-id="1:1184">
+        <article class="card" data-node-id="1:1184" data-project="lifespace" role="button" tabindex="0" aria-haspopup="dialog">
           <div class="card__media" aria-hidden="true"><img src="images/card-lifespace.webp" alt="" /></div>
           <span class="card__tag">Brand Building</span>
           <div class="card__bottom">
@@ -608,7 +738,7 @@ html:not(.unlocked) body{ overflow:hidden; }
           </span>
         </article>
 
-        <article class="card card--contain" data-node-id="2:3">
+        <article class="card card--contain" data-node-id="2:3" data-project="advil" role="button" tabindex="0" aria-haspopup="dialog">
           <div class="card__media" aria-hidden="true"><img src="images/card-advil.webp" alt="" /></div>
           <span class="card__tag">Human Impact</span>
           <div class="card__bottom">
@@ -620,7 +750,7 @@ html:not(.unlocked) body{ overflow:hidden; }
           </span>
         </article>
 
-        <article class="card card--tallcopy" data-node-id="12:368">
+        <article class="card card--tallcopy" data-node-id="12:368" data-project="alzheimers-association" role="button" tabindex="0" aria-haspopup="dialog">
           <div class="card__media" aria-hidden="true"><img src="images/card-alzheimers.webp" alt="" /></div>
           <span class="card__tag">Experience Design</span>
           <div class="card__bottom">
@@ -632,7 +762,7 @@ html:not(.unlocked) body{ overflow:hidden; }
           </span>
         </article>
 
-        <article class="card card--tallcopy" data-node-id="12:381">
+        <article class="card card--tallcopy" data-node-id="12:381" data-project="progressive" role="button" tabindex="0" aria-haspopup="dialog">
           <div class="card__media" aria-hidden="true"><img src="images/card-progressive.webp" alt="" /></div>
           <span class="card__tag">Audience Expansion</span>
           <div class="card__bottom">
@@ -644,7 +774,7 @@ html:not(.unlocked) body{ overflow:hidden; }
           </span>
         </article>
 
-        <article class="card card--tallcopy" data-node-id="12:394">
+        <article class="card card--tallcopy" data-node-id="12:394" data-project="blackweek" role="button" tabindex="0" aria-haspopup="dialog">
           <div class="card__media" aria-hidden="true"><img src="images/card-blackweek.webp" alt="" /></div>
           <span class="card__tag">Experiential</span>
           <div class="card__bottom">
@@ -688,6 +818,31 @@ html:not(.unlocked) body{ overflow:hidden; }
 </main>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- ================= PROJECT MODAL ================= -->
+<div class="modal-overlay" id="modal-overlay" data-open="false">
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" tabindex="-1">
+    <button class="modal__close" id="modal-close" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M6 6l12 12M18 6L6 18" stroke="#fff" stroke-width="1.6" stroke-linecap="round" />
+      </svg>
+    </button>
+    <div class="modal__scroll" id="modal-scroll">
+      <div class="modal__lockup">
+        <p class="modal__eyebrow">CLIENT</p>
+        <h2 class="modal__title" id="modal-title"></h2>
+      </div>
+      <div class="modal__hero" id="modal-hero"></div>
+      <div class="modal__body">
+        <div class="modal__details" id="modal-details"></div>
+        <hr class="rule" />
+        <div class="modal__footer">
+          <p>©2026 Walter Geer III</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
 (function(){
@@ -1020,6 +1175,138 @@ html:not(.unlocked) body{ overflow:hidden; }
   /* --- keep the hover lift honest while the pointer is down --- */
   window.addEventListener("blur", function(){ dragging = false;
     scroller.classList.remove("is-dragging"); });
+
+  /* ==========================================================
+     PROJECT MODAL
+     Only Covered California has full case-study copy so far; every
+     other card opens the same modal shell using the tag/title/desc/
+     image already on its card face — real content, just less of it,
+     rather than inventing case-study copy that doesn't exist yet.
+     ========================================================== */
+  var PROJECTS = {
+    "covered-california": {
+      client: "Covered California",
+      video: '<iframe src="https://player.vimeo.com/video/1214351487?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="CoveredCalifornia_90"></iframe>',
+      details: [
+        { h: "Brand Transformation", dek: "For the Love of Californians",
+          copy: ["Rebuilding relevance by creating a brand that saw, understood and spoke to the full diversity of California."] },
+        { h: "The Challenge",
+          copy: [
+            "Covered California was facing a critical business problem: enrollment was declining, and the brand was struggling to connect with the breadth of communities it was created to serve.",
+            "California is one of the most diverse places in the world, yet the brand’s communications did not fully reflect the cultures, experiences and realities of its people. Reaching a broader audience required more than translating a general-market campaign. It required a new way of seeing—and speaking to—California."
+          ] },
+        { h: "The Transformation", lead: "We repositioned Covered California around a simple but powerful idea:", dek: "For the Love of Californians",
+          copy: [
+            "The platform transformed Covered California from a health-insurance marketplace into a brand that demonstrated genuine care for the people of the state.",
+            "Instead of treating different communities as separate audiences on the margins, we built a unifying brand idea flexible enough to celebrate what Californians share while speaking authentically to the experiences that make each community distinct.",
+            "The result was a more human, inclusive and culturally relevant expression of the brand—and its best-performing campaign in years."
+          ] },
+        { h: "Film One", dek: "Brand Anthem",
+          copy: [
+            "The Brand Anthem introduced a new chapter for Covered California and a new approach to reaching the state’s diverse population.",
+            "For the first time, the brand intentionally brought Black, Latino, Asian and LGBTQ+ communities together within one campaign—not as boxes to check, but as integral parts of the California story.",
+            "The film created a shared emotional foundation for the brand: although Californians come from different cultures, communities and lived experiences, everyone deserves access to care and the opportunity to live a healthy life."
+          ] },
+        { h: "Film Two", dek: "Backyard",
+          copy: [
+            "“Backyard” brought the platform closer to the lived experience of Black Californians.",
+            "Built around the warmth, familiarity and connection of a backyard gathering, the film showed health coverage within a culturally recognizable moment—family, community and people looking out for one another.",
+            "Rather than simply placing Black people inside a general-market message, we created a story grounded in the nuances, relationships and sense of collective care found within the community."
+          ] },
+        { h: "The Impact",
+          copy: [
+            "The campaign helped Covered California reach broader audiences with greater relevance, humanity and cultural understanding.",
+            "More importantly, it reversed years of declining campaign performance and became the organization’s best-performing work in years, proving that reflecting more of California wasn’t only the right creative approach. It was the right business strategy."
+          ] },
+        { h: "My Role", dek: "Chief Creative Officer",
+          copy: ["I led the creative vision and transformation of the Covered California brand, helping establish the strategic platform, guide the work across audiences and ensure cultural specificity strengthened one unified brand idea."] }
+      ]
+    }
+  };
+
+  var overlay   = document.getElementById("modal-overlay");
+  var modalEl   = document.getElementById("modal");
+  var modalScroll = document.getElementById("modal-scroll");
+  var titleEl   = document.getElementById("modal-title");
+  var heroEl    = document.getElementById("modal-hero");
+  var detailsEl = document.getElementById("modal-details");
+  var closeBtn  = document.getElementById("modal-close");
+  var lastFocus = null;
+
+  function renderBlock(block){
+    var html = '<div class="modal-block">';
+    html += '<h3 class="modal-block__h">' + block.h + '</h3>';
+    if (block.lead) html += '<p class="modal-block__p">' + block.lead + '</p>';
+    if (block.dek)  html += '<p class="modal-block__dek">' + block.dek + '</p>';
+    block.copy.forEach(function(p){ html += '<p class="modal-block__p">' + p + '</p>'; });
+    html += '</div>';
+    return html;
+  }
+
+  function openModal(card){
+    var slug  = card.dataset.project;
+    var data  = PROJECTS[slug];
+    var title = card.querySelector(".card__title");
+    var desc  = card.querySelector(".card__desc");
+    var img   = card.querySelector(".card__media img");
+
+    titleEl.textContent = data ? data.client : (title ? title.textContent : "");
+
+    if (data && data.video){
+      heroEl.innerHTML = '<div class="modal__hero-media">' + data.video + '</div>';
+    } else if (img) {
+      heroEl.innerHTML = '<div class="modal__hero-media"><img src="' + img.getAttribute("src") + '" alt="" /></div>';
+    } else {
+      heroEl.innerHTML = "";
+    }
+
+    if (data && data.details){
+      detailsEl.innerHTML = data.details.map(renderBlock).join("");
+    } else {
+      var tag = card.querySelector(".card__tag");
+      var block = {
+        h: title ? title.textContent : "",
+        dek: tag ? tag.textContent : "",
+        copy: desc ? [desc.textContent] : []
+      };
+      detailsEl.innerHTML = renderBlock(block);
+    }
+
+    lastFocus = document.activeElement;
+    document.documentElement.classList.add("modal-open");
+    overlay.setAttribute("data-open", "true");
+    modalScroll.scrollTop = 0;
+    closeBtn.focus();
+    document.addEventListener("keydown", onModalKeydown);
+  }
+
+  function closeModal(){
+    document.documentElement.classList.remove("modal-open");
+    overlay.setAttribute("data-open", "false");
+    document.removeEventListener("keydown", onModalKeydown);
+    if (lastFocus && typeof lastFocus.focus === "function") lastFocus.focus();
+  }
+
+  function onModalKeydown(e){
+    if (e.key === "Escape") closeModal();
+  }
+
+  document.getElementById("track").addEventListener("click", function(e){
+    var card = e.target.closest(".card");
+    if (card) openModal(card);
+  });
+  document.getElementById("track").addEventListener("keydown", function(e){
+    if (e.key !== "Enter" && e.key !== " ") return;
+    var card = e.target.closest(".card");
+    if (!card) return;
+    e.preventDefault();
+    openModal(card);
+  });
+
+  closeBtn.addEventListener("click", closeModal);
+  overlay.addEventListener("click", function(e){
+    if (e.target === overlay) closeModal();
+  });
 
 })();
 </script>
