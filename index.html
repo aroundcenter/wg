@@ -1291,8 +1291,17 @@ html.modal-open body{ overflow:hidden; }
     if (e.key === "Escape") closeModal();
   }
 
-  document.getElementById("track").addEventListener("click", function(e){
-    var card = e.target.closest(".card");
+  /* scroller.setPointerCapture() (above, for drag-scrolling) makes
+     Chromium retarget the resulting click event to the scroller
+     itself rather than wherever the pointer actually was, so e.target
+     can't be trusted here — read the real element at the click point
+     instead. Reuses `dragged` directly rather than depending on the
+     drag-swallow listener's stopPropagation, since two listeners on
+     the same element both still fire regardless of it. */
+  scroller.addEventListener("click", function(e){
+    if (dragged > 6) return;
+    var el = document.elementFromPoint(e.clientX, e.clientY);
+    var card = el && el.closest(".card");
     if (card) openModal(card);
   });
   document.getElementById("track").addEventListener("keydown", function(e){
