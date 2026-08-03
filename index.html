@@ -546,11 +546,14 @@ html.modal-open body{ overflow:hidden; }
 
 .modal-overlay{
   position:fixed; inset:0; z-index:300;
-  background:rgba(255,255,255,.6);
+  /* --card-base, tinted enough to read as a distinct plane behind the
+     modal's pure-white surface — a flat white-on-white scrim was too
+     close in value to tell the two apart. */
+  background:rgba(224,223,216,.78);
   backdrop-filter:blur(20px);
   -webkit-backdrop-filter:blur(20px);
   opacity:0; visibility:hidden;
-  transition:opacity 280ms var(--ease-out), visibility 280ms;
+  transition:opacity 380ms var(--ease-out), visibility 380ms;
 }
 .modal-overlay[data-open="true"]{ opacity:1; visibility:visible; }
 
@@ -563,8 +566,8 @@ html.modal-open body{ overflow:hidden; }
   border-radius:var(--modal-radius) var(--modal-radius) 0 0;
   display:flex; flex-direction:column;
   overflow:hidden;
-  transform:translateY(28px);
-  transition:transform 320ms var(--ease-out);
+  transform:translateY(64px);
+  transition:transform 420ms var(--ease-out);
 }
 .modal-overlay[data-open="true"] .modal{ transform:translateY(0); }
 
@@ -1307,7 +1310,7 @@ html.modal-open body{ overflow:hidden; }
     // Skip it if a new modal was opened again before the timeout fires.
     setTimeout(function(){
       if (overlay.getAttribute("data-open") === "false") heroEl.innerHTML = "";
-    }, 350);
+    }, 450);
   }
 
   function onModalKeydown(e){
