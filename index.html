@@ -6,6 +6,14 @@
 <title>Walter Geer III — Creative leader, inventor and entrepreneur</title>
 <meta name="description" content="Creative leader, inventor and entrepreneur building brands, experiences and ideas that move culture and business." />
 
+<!-- Runs before the page paints so an already-unlocked visitor never
+     sees a flash of the password gate. -->
+<script>
+  if (localStorage.getItem("wg-unlocked") === "1") {
+    document.documentElement.classList.add("unlocked");
+  }
+</script>
+
 <!-- Neue Haas Unica W1G -->
 <link rel="stylesheet" href="https://use.typekit.net/dbr5emm.css">
 
@@ -442,10 +450,83 @@ a{ color:inherit; }
   }
   .card:hover{ transform:none; }
 }
+
+/* ============================================================
+   12. PASSWORD GATE
+   Client-side visitor gate only — the page markup still ships to
+   anyone who requests it, this just keeps casual visitors out.
+   ============================================================ */
+html.unlocked #pw-gate{ display:none; }
+html:not(.unlocked) body{ overflow:hidden; }
+
+#pw-gate{
+  position:fixed; inset:0; z-index:1000;
+  display:flex; align-items:center; justify-content:center;
+  padding:24px;
+  background:var(--paper);
+}
+.pw-gate__box{
+  width:100%; max-width:340px;
+}
+.pw-gate__label{
+  display:block;
+  margin-bottom:12px;
+  font-size:15px;
+  color:var(--muted);
+}
+.pw-gate__row{
+  display:flex;
+  gap:8px;
+}
+.pw-gate__input{
+  flex:1 1 auto;
+  min-width:0;
+  padding:12px 14px;
+  border:1px solid var(--rule);
+  border-radius:6px;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:inherit;
+  font-size:16px;
+}
+.pw-gate__input:focus-visible{
+  outline:2px solid var(--ink);
+  outline-offset:1px;
+}
+.pw-gate__submit{
+  flex:0 0 auto;
+  padding:12px 18px;
+  border:0; border-radius:6px;
+  background:var(--ink);
+  color:var(--paper);
+  font-family:inherit;
+  font-size:15px;
+  font-weight:700;
+  cursor:pointer;
+}
+.pw-gate__submit:hover{ opacity:.88; }
+.pw-gate__error{
+  margin-top:10px;
+  font-size:14px;
+  color:#b3261e;
+  min-height:1.2em;
+}
 </style>
 </head>
 
 <body>
+
+<!-- ================= PASSWORD GATE ================= -->
+<div id="pw-gate">
+  <form class="pw-gate__box" id="pw-gate-form" autocomplete="off">
+    <label class="pw-gate__label" for="pw-gate-input">This site is password protected.</label>
+    <div class="pw-gate__row">
+      <input class="pw-gate__input" id="pw-gate-input" name="password" type="password" placeholder="Password" required autofocus />
+      <button class="pw-gate__submit" type="submit">Enter</button>
+    </div>
+    <p class="pw-gate__error" id="pw-gate-error" role="alert"></p>
+  </form>
+</div>
 
 <!-- ================= NAV ================= -->
 <header class="nav" data-node-id="1:3">
@@ -627,6 +708,49 @@ a{ color:inherit; }
   };
 
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---------- password gate ---------- */
+  (function(){
+    var STORAGE_KEY  = "wg-unlocked";
+    var TARGET_HASH  = "251371346dcd44032f335e512aa9341f42b465d42800e9c85381a6add29500a2";
+    var gateForm     = document.getElementById("pw-gate-form");
+    var gateInput    = document.getElementById("pw-gate-input");
+    var gateError    = document.getElementById("pw-gate-error");
+
+    if (!gateForm) return;
+
+    function unlock(){
+      localStorage.setItem(STORAGE_KEY, "1");
+      document.documentElement.classList.add("unlocked");
+    }
+
+    function sha256Hex(text){
+      var bytes = new TextEncoder().encode(text);
+      return crypto.subtle.digest("SHA-256", bytes).then(function(buf){
+        return Array.prototype.map.call(new Uint8Array(buf), function(b){
+          return b.toString(16).padStart(2, "0");
+        }).join("");
+      });
+    }
+
+    gateForm.addEventListener("submit", function(e){
+      e.preventDefault();
+      if (!window.crypto || !crypto.subtle){
+        gateError.textContent = "Password check needs a secure (https) connection.";
+        return;
+      }
+      sha256Hex(gateInput.value).then(function(hex){
+        if (hex === TARGET_HASH){
+          gateError.textContent = "";
+          unlock();
+        } else {
+          gateError.textContent = "Incorrect password.";
+          gateInput.value = "";
+          gateInput.focus();
+        }
+      });
+    });
+  })();
 
   /* ---------- toast ---------- */
   var toastEl = document.getElementById("toast");
