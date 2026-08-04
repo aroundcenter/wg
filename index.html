@@ -47,6 +47,7 @@
      standard gutter at desktop (208px vs 104px); same mobile floor. */
   --gutter-2x: clamp(20px, calc(20px + 188 * (100vw - 390px) / 1050), 208px);
   --nav-px:    clamp(20px, calc(20px + 36 * (100vw - 390px) / 1050), 56px);
+  --nav-h:     75px;
   --nav-py:    clamp(12px, calc(12px + 16 * (100vw - 390px) / 1050), 28px);
   --identity:  clamp(16px, calc(16px +  2 * (100vw - 390px) / 1050), 18px);
   --lockup-pt: clamp(64px, calc(64px + 66 * (100vw - 390px) / 1050), 130px);
@@ -156,7 +157,7 @@ a{ color:inherit; }
   -webkit-backdrop-filter:saturate(180%) blur(20px);
   backdrop-filter:saturate(180%) blur(20px);
   display:flex; align-items:center;
-  height:75px;
+  height:var(--nav-h);
   padding-inline:var(--nav-px);
 }
 /* A sticky element's "stuck" position is computed against its nearest
@@ -164,8 +165,13 @@ a{ color:inherit; }
    open (below) changes that ancestor out from under it mid-frame, which
    was making the nav jump/disappear right as the modal opened. Since a
    stuck nav already sits at top:0, swapping to fixed at the same offset
-   lands in the identical spot with nothing to recompute. */
+   lands in the identical spot with nothing to recompute.
+   Going from sticky to fixed also takes the nav out of document flow,
+   though, collapsing the space it used to occupy and yanking everything
+   below it (the cards included) up by --nav-h — the padding-top on body
+   puts that space back so nothing else shifts. */
 html.modal-open .nav{ position:fixed; top:0; left:0; right:0; }
+html.modal-open body{ padding-top:var(--nav-h); }
 .topbar{
   display:flex; align-items:center; justify-content:space-between;
   gap:16px; width:100%;
@@ -468,7 +474,7 @@ html.modal-open .nav{ position:fixed; top:0; left:0; right:0; }
 @media (max-width:720px){
   .nav-links{ display:none; }
   .menu-toggle{ display:block; }
-  .nav{ height:60px; }
+  :root{ --nav-h:60px; }
 }
 
 /* ============================================================
