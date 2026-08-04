@@ -1522,11 +1522,22 @@ html.modal-open body{ overflow:hidden; }
     document.body.style.right = "0";
   }
   function unlockBodyScroll(){
+    // Clear the fixed styles FIRST — while body is still position:fixed,
+    // it's the only content and has no normal-flow height, so the
+    // document has nothing to scroll and scrollTo would silently no-op.
+    // Restoring flow first gives the page its real scrollable range back,
+    // then scrollTo can actually land on the saved position. Both
+    // statements run synchronously in the same task, so the browser
+    // never paints the in-between (wrong-position) state.
     document.body.style.position = "";
     document.body.style.top = "";
     document.body.style.left = "";
     document.body.style.right = "";
-    window.scrollTo(0, lockedScrollY);
+    // behavior:"instant" matters here: html has scroll-behavior:smooth
+    // globally, which scrollTo inherits by default — without overriding
+    // it, closing the modal made the page visibly glide back to its old
+    // position instead of just reappearing there.
+    window.scrollTo({ top: lockedScrollY, left: 0, behavior: "instant" });
   }
 
   function renderBlock(block){
