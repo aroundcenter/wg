@@ -1449,14 +1449,31 @@ html.modal-open body{ overflow:hidden; }
   // (setPointerCapture etc.) never sees moves that start over the video.
   // Touch/trackpad panning is handled by the compositor and works
   // regardless, which is why this leans on it instead.
+  // Vimeo's iframe player listens for postMessage commands even without
+  // the player.js library — a JSON-RPC-style {method:"pause"} is enough.
+  // Harmless to send to a video that isn't playing.
+  function pauseIframe(iframe){
+    if (!iframe) return;
+    try { iframe.contentWindow.postMessage(JSON.stringify({ method: "pause" }), "https://player.vimeo.com"); }
+    catch (e) {}
+  }
+
   function initHeroCarousel(){
     var el = document.getElementById("modal-hero-carousel");
     if (!el) return;
     var dots = heroEl.querySelectorAll(".modal__hero-dot");
+    var iframes = el.querySelectorAll(".modal__hero-media iframe");
     var dotTimer = null;
+    var activeIndex = 0;
 
     function updateDots(){
       var i = Math.round(el.scrollLeft / el.clientWidth);
+      if (i !== activeIndex){
+        // Stop whichever video is being swiped away from — otherwise it
+        // keeps playing off-screen behind the one now in view.
+        pauseIframe(iframes[activeIndex]);
+        activeIndex = i;
+      }
       dots.forEach(function(d, idx){
         if (idx === i) d.setAttribute("aria-current", "true");
         else d.removeAttribute("aria-current");
