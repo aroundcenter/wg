@@ -159,6 +159,13 @@ a{ color:inherit; }
   height:75px;
   padding-inline:var(--nav-px);
 }
+/* A sticky element's "stuck" position is computed against its nearest
+   scrolling ancestor — pinning body to position:fixed while a modal is
+   open (below) changes that ancestor out from under it mid-frame, which
+   was making the nav jump/disappear right as the modal opened. Since a
+   stuck nav already sits at top:0, swapping to fixed at the same offset
+   lands in the identical spot with nothing to recompute. */
+html.modal-open .nav{ position:fixed; top:0; left:0; right:0; }
 .topbar{
   display:flex; align-items:center; justify-content:space-between;
   gap:16px; width:100%;
