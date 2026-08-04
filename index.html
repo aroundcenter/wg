@@ -581,6 +581,11 @@ html.modal-open body{ overflow:hidden; }
   -webkit-backdrop-filter:blur(20px);
   opacity:0;
   transition:opacity 380ms var(--ease-out);
+  /* backdrop-filter needs its own GPU compositing layer — hinting for
+     one up front (rather than letting the browser build it on demand
+     the instant this becomes visible) is part of what avoids the flash
+     openModal()'s double rAF defer is the other half of. */
+  will-change:opacity;
 }
 .modal-overlay[data-open="true"] .modal-overlay__scrim{ opacity:1; }
 
@@ -1675,10 +1680,21 @@ html.modal-open body{ overflow:hidden; }
     lastFocus = document.activeElement;
     document.documentElement.classList.add("modal-open");
     lockBodyScroll();
-    overlay.setAttribute("data-open", "true");
     modalScroll.scrollTop = 0;
     closeBtn.focus();
     document.addEventListener("keydown", onModalKeydown);
+
+    // backdrop-filter needs its own GPU compositing layer, and building
+    // one for the first time in the same frame the opacity transition
+    // starts was causing a visible flash before the blur caught up.
+    // Waiting a frame (the nested rAF guarantees the closed/invisible
+    // state has actually been painted, not just scheduled) gives the
+    // browser a chance to build that layer beforehand.
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        overlay.setAttribute("data-open", "true");
+      });
+    });
   }
 
   function closeModal(){
