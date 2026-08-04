@@ -1428,6 +1428,26 @@ html.modal-open body{ overflow:hidden; }
   var closeBtn  = document.getElementById("modal-close");
   var lastFocus = null;
   var closeTimer = null;
+  var lockedScrollY = 0;
+
+  // overflow:hidden on body (below) doesn't reliably stop the page behind
+  // from scrolling on touch devices once a nested scrollable element like
+  // the modal is being dragged — the page can still bleed through. Pinning
+  // body in place with position:fixed is the robust cross-browser fix.
+  function lockBodyScroll(){
+    lockedScrollY = window.scrollY || window.pageYOffset || 0;
+    document.body.style.position = "fixed";
+    document.body.style.top = "-" + lockedScrollY + "px";
+    document.body.style.left = "0";
+    document.body.style.right = "0";
+  }
+  function unlockBodyScroll(){
+    document.body.style.position = "";
+    document.body.style.top = "";
+    document.body.style.left = "";
+    document.body.style.right = "";
+    window.scrollTo(0, lockedScrollY);
+  }
 
   function renderBlock(block){
     // Two shapes, matching Figma's own nesting exactly (measured via
@@ -1547,6 +1567,7 @@ html.modal-open body{ overflow:hidden; }
 
     lastFocus = document.activeElement;
     document.documentElement.classList.add("modal-open");
+    lockBodyScroll();
     overlay.setAttribute("data-open", "true");
     modalScroll.scrollTop = 0;
     closeBtn.focus();
@@ -1555,6 +1576,7 @@ html.modal-open body{ overflow:hidden; }
 
   function closeModal(){
     document.documentElement.classList.remove("modal-open");
+    unlockBodyScroll();
     overlay.setAttribute("data-open", "false");
     document.removeEventListener("keydown", onModalKeydown);
     if (lastFocus && typeof lastFocus.focus === "function") lastFocus.focus();
