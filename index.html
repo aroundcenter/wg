@@ -72,7 +72,8 @@
   --modal-close-inset: clamp(16px, calc(16px + 16 * (100vw - 390px) / 1050), 32px);
   --modal-close-size:  clamp(40px, calc(40px + 20 * (100vw - 390px) / 1050), 60px);
   --modal-close-icon:  clamp(16px, calc(16px +  8 * (100vw - 390px) / 1050), 24px);
-  --modal-hero-py:  clamp(32px, calc(32px + 48 * (100vw - 390px) / 1050), 80px);
+  --modal-hero-py:  clamp(32px, calc(32px + 32 * (100vw - 390px) / 1050), 64px);
+  --modal-pl:       clamp(20px, calc(20px + 140 * (100vw - 390px) / 1050), 160px);
   --detail-h:       clamp(24px, calc(24px + 15 * (100vw - 390px) / 1050), 39px);
   --detail-sub:     clamp(18px, calc(18px +  7 * (100vw - 390px) / 1050), 25px);
   --detail-body:    clamp(15px, calc(15px +  3 * (100vw - 390px) / 1050), 18px);
@@ -615,12 +616,7 @@ html.modal-open body{ overflow:hidden; }
 
 .modal__lockup{
   display:flex; flex-direction:column; gap:8px;
-  padding:clamp(56px, calc(56px + 120 * (100vw - 390px) / 1050), 176px) var(--gutter) 0 var(--gutter-2x);
-}
-.modal__eyebrow{
-  font-size:14px; font-weight:700;
-  letter-spacing:.04em;
-  color:var(--muted);
+  padding:clamp(56px, calc(56px + 80 * (100vw - 390px) / 1050), 136px) var(--gutter) 0 var(--modal-pl);
 }
 .modal__title{
   font-size:var(--h1);
@@ -649,8 +645,8 @@ html.modal-open body{ overflow:hidden; }
 }
 
 .modal__body{
-  display:flex; flex-direction:column; gap:68px;
-  padding:40px var(--gutter-2x) 104px;
+  display:flex; flex-direction:column;
+  padding:40px var(--gutter-2x) 136px var(--modal-pl);
 }
 .modal__details{
   display:flex; flex-direction:column;
@@ -659,6 +655,12 @@ html.modal-open body{ overflow:hidden; }
   color:var(--ink);
 }
 .modal-block{ display:flex; flex-direction:column; gap:8px; }
+/* Blocks with a dek (a named sub-title, e.g. "Brand Anthem") get more
+   room before the body copy, and their heading pulls in 4px closer
+   to the dek beneath it — headings alone (The Challenge, The Impact)
+   keep the tighter default. */
+.modal-block--has-dek{ gap:16px; }
+.modal-block--has-dek .modal-block__h{ margin-bottom:-4px; }
 .modal-block__h{
   font-size:var(--detail-h);
   font-weight:900;
@@ -667,6 +669,7 @@ html.modal-open body{ overflow:hidden; }
 .modal-block__dek{
   font-size:var(--detail-sub);
   font-weight:500;
+  font-style:italic;
   color:var(--muted);
   line-height:1.42;
 }
@@ -676,13 +679,6 @@ html.modal-open body{ overflow:hidden; }
   line-height:1.42;
 }
 .modal-block__p + .modal-block__p{ margin-top:1.42em; }
-
-.modal__footer{
-  display:flex; align-items:flex-start; justify-content:space-between;
-  width:100%; min-height:24px;
-  font-size:14px; letter-spacing:.02em;
-  color:var(--muted);
-}
 </style>
 </head>
 
@@ -872,16 +868,11 @@ html.modal-open body{ overflow:hidden; }
     </button>
     <div class="modal__scroll" id="modal-scroll">
       <div class="modal__lockup">
-        <p class="modal__eyebrow">CLIENT</p>
         <h2 class="modal__title" id="modal-title"></h2>
       </div>
       <div class="modal__hero" id="modal-hero"></div>
       <div class="modal__body">
         <div class="modal__details" id="modal-details"></div>
-        <hr class="rule" />
-        <div class="modal__footer">
-          <p>©2026 Walter Geer III</p>
-        </div>
       </div>
     </div>
   </div>
@@ -1278,7 +1269,8 @@ html.modal-open body{ overflow:hidden; }
   var closeTimer = null;
 
   function renderBlock(block){
-    var html = '<div class="modal-block">';
+    var cls = "modal-block" + (block.dek ? " modal-block--has-dek" : "");
+    var html = '<div class="' + cls + '">';
     html += '<h3 class="modal-block__h">' + block.h + '</h3>';
     if (block.lead) html += '<p class="modal-block__p">' + block.lead + '</p>';
     if (block.dek)  html += '<p class="modal-block__dek">' + block.dek + '</p>';
