@@ -66,7 +66,7 @@
 
   /* project modal */
   --modal-top:      clamp(16px, calc(16px + 4 * (100vw - 390px) / 1050), 20px);
-  --modal-side:     16px;
+  --modal-side:     clamp(0px, calc(0px + 16 * (100vw - 390px) / 1050), 16px);
   --modal-max-w:    1280px;
   --modal-radius:   40px;
   --modal-close-inset: clamp(16px, calc(16px + 16 * (100vw - 390px) / 1050), 32px);
@@ -586,6 +586,9 @@ html.modal-open body{ overflow:hidden; }
   transition:transform 420ms var(--ease-out);
 }
 .modal-overlay[data-open="true"] .modal{ transform:translateY(0); }
+/* Swipe/drag-to-dismiss tracks the pointer 1:1 while active — the
+   eased transition only takes back over once the finger lifts. */
+.modal--dragging{ transition:none; }
 
 .modal__close{
   position:absolute; z-index:2;
@@ -605,7 +608,10 @@ html.modal-open body{ overflow:hidden; }
   overflow-y:auto;
   overscroll-behavior:contain;
   -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+  -ms-overflow-style:none;
 }
+.modal__scroll::-webkit-scrollbar{ display:none; }
 
 .modal__lockup{
   display:flex; flex-direction:column; gap:8px;
@@ -1345,6 +1351,61 @@ html.modal-open body{ overflow:hidden; }
   function onModalKeydown(e){
     if (e.key === "Escape") closeModal();
   }
+
+  /* ---------- swipe (or drag) down to dismiss ---------- */
+  var swipe = null;
+
+  modalScroll.addEventListener("pointerdown", function(e){
+    swipe = {
+      pointerId: e.pointerId,
+      startY: e.clientY, lastY: e.clientY,
+      startTime: performance.now(), lastTime: performance.now(),
+      velocity: 0,
+      dragging: false,
+      // Only a drag that begins with the content already scrolled to
+      // its top can be a dismiss — otherwise it's just scrolling.
+      atTop: modalScroll.scrollTop <= 0
+    };
+  });
+
+  modalScroll.addEventListener("pointermove", function(e){
+    if (!swipe || e.pointerId !== swipe.pointerId) return;
+    var dy = e.clientY - swipe.startY;
+
+    if (!swipe.dragging){
+      if (swipe.atTop && dy > 8 && modalScroll.scrollTop <= 0){
+        swipe.dragging = true;
+        modalEl.classList.add("modal--dragging");
+        modalScroll.setPointerCapture(e.pointerId);
+      } else {
+        return; // let the content scroll normally
+      }
+    }
+
+    e.preventDefault();
+    modalEl.style.transform = "translateY(" + Math.max(0, dy) + "px)";
+    var now = performance.now(), dt = now - swipe.lastTime;
+    if (dt > 0) swipe.velocity = (e.clientY - swipe.lastY) / dt;   // px per ms
+    swipe.lastY = e.clientY; swipe.lastTime = now;
+  });
+
+  function endSwipe(e){
+    if (!swipe) return;
+    if (swipe.dragging){
+      var dy = swipe.lastY - swipe.startY;
+      var shouldClose = dy > 120 || swipe.velocity > 0.5;
+      modalEl.classList.remove("modal--dragging");
+      // Flip state (if closing) before clearing the inline transform,
+      // so removing it reveals the already-correct CSS target and the
+      // transition animates straight there in one motion, rather than
+      // snapping open then re-animating closed.
+      if (shouldClose) closeModal();
+      modalEl.style.transform = "";
+    }
+    swipe = null;
+  }
+  modalScroll.addEventListener("pointerup", endSwipe);
+  modalScroll.addEventListener("pointercancel", endSwipe);
 
   /* scroller.setPointerCapture() (above, for drag-scrolling) makes
      Chromium retarget the resulting click event to the scroller
