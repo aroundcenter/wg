@@ -469,6 +469,28 @@ html.modal-open body{ padding-top:var(--nav-h); }
 }
 .toast[data-show="true"]{ opacity:1; transform:translate(-50%,0); }
 
+/* Floating, fixed-position button — persists at the bottom-right corner
+   throughout the page regardless of scroll. The password gate (z-index
+   1000) and the project modal (z-index 300) both sit above it without
+   any extra logic: the gate covers it opaquely while locked, and the
+   modal is meant to open right over it once unlocked. */
+.approach-btn{
+  position:fixed; right:24px; bottom:24px; z-index:90;
+  padding:16px 26px;
+  border:0; border-radius:999px;
+  background:var(--ink);
+  color:#fff;
+  font-family:inherit;
+  font-size:15px;
+  font-weight:600;
+  letter-spacing:-0.01em;
+  cursor:pointer;
+  box-shadow:0 12px 32px -8px rgba(26,26,23,.35), 0 4px 12px -4px rgba(26,26,23,.22);
+  transition:opacity 200ms var(--ease-out), transform 200ms var(--ease-out);
+}
+.approach-btn:hover{ opacity:.86; }
+.approach-btn:active{ transform:scale(.96); }
+
 /* ============================================================
    10. BREAKPOINTS
    ============================================================ */
@@ -476,6 +498,7 @@ html.modal-open body{ padding-top:var(--nav-h); }
   .nav-links{ display:none; }
   .menu-toggle{ display:block; }
   :root{ --nav-h:60px; }
+  .approach-btn{ right:16px; bottom:16px; padding:14px 22px; font-size:14px; }
 }
 
 /* ============================================================
@@ -677,6 +700,7 @@ html.modal-open body{ overflow:hidden; }
   gap:32px;
   padding-inline:0;
 }
+.modal__hero--empty{ display:none; }
 .modal__hero-media{
   position:relative;
   width:100%; max-width:1070px;
@@ -939,6 +963,8 @@ html.modal-open body{ overflow:hidden; }
 </main>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<button type="button" class="approach-btn" id="approach-btn" aria-haspopup="dialog">My approach</button>
 
 <!-- ================= PROJECT MODAL ================= -->
 <div class="modal-overlay" id="modal-overlay" data-open="false" inert>
@@ -1749,6 +1775,60 @@ html.modal-open body{ overflow:hidden; }
             "It can bring people together, open doors, shift conversations and create something the world did not know it needed until it existed."
           ] }
       ]
+    },
+    "approach": {
+      client: "Approach",
+      details: [
+        { h: "The best work begins with how people feel.",
+          copy: [
+            "Great creative leadership is not about having every answer or being the loudest voice in the room.",
+            "It is about creating clarity, building trust and giving people the confidence to explore ideas they may not otherwise have the courage to share.",
+            "My role is to establish the ambition, protect the environment and help talented people create work they did not know they were capable of making."
+          ] },
+        { h: "See the opportunity others miss",
+          copy: [
+            "The best ideas often live beyond the assignment.",
+            "I look at what we have been asked to make, then ask what the business, the audience and the moment actually need.",
+            "Sometimes that means expanding a social assignment into a Super Bowl commercial. Sometimes it means turning a campaign brief into a product. Sometimes it means creating an entirely new platform.",
+            "I do not believe creativity should be limited by the boundaries of the brief."
+          ] },
+        { h: "Build the idea, not the deliverable",
+          copy: [
+            "I never begin by assuming the answer is an advertisement.",
+            "The answer may be a product, an experience, a platform, a piece of technology or a new way of doing business.",
+            "My responsibility is to understand the problem deeply enough to recognize what the idea needs to become.",
+            "Because the goal is not to make more things.",
+            "The goal is to make the right thing."
+          ] },
+        { h: "Create clarity without flattening creativity",
+          copy: [
+            "A strong creative vision should give people direction without telling them exactly how to think.",
+            "I believe in setting a clear ambition, aligning everyone around what we are trying to achieve and then giving talented people the freedom to bring their own experiences, instincts and perspectives to the work.",
+            "The best leaders do not create teams that think exactly like they do.",
+            "They create teams that understand where they are going and feel empowered to find unexpected ways to get there."
+          ] },
+        { h: "Create safety before expecting bravery",
+          copy: [
+            "Creatives do their best work when they feel safe.",
+            "Safe enough to say the idea that sounds ridiculous.",
+            "Safe enough to challenge the most senior person in the room.",
+            "Safe enough to admit when they do not know something.",
+            "Safe enough to fail, learn and try again.",
+            "I want the people around me to know they can say anything without fear of being embarrassed, dismissed or reprimanded. Not every idea will be right, but every idea deserves the opportunity to be heard and explored.",
+            "When people feel protected, respected and trusted, they stop creating from fear.",
+            "They become fearless.",
+            "That is when they go further than the assignment, push beyond the expected and create ideas none of us could have reached alone."
+          ] },
+        { h: "Make space for more people to win",
+          copy: [
+            "Leadership is not only about producing great work.",
+            "It is about creating opportunities, developing talent and opening doors that remain open after you walk through them.",
+            "I want teams to learn together, challenge one another and share what they know without protecting information or competing for credit.",
+            "The work becomes stronger when more voices are part of shaping it. The culture becomes stronger when people know their growth matters as much as the final product.",
+            "My success as a leader is not measured only by what I create.",
+            "It is measured by what the people around me become capable of creating."
+          ] }
+      ]
     }
   };
 
@@ -1838,12 +1918,16 @@ html.modal-open body{ overflow:hidden; }
     });
   }
 
-  function openModal(card){
-    var slug  = card.dataset.project;
+  function openModal(cardOrSlug){
+    // Accepts either a .card element (project cards) or a bare project
+    // slug string (e.g. the standalone "My Approach" button, which has
+    // no card of its own to read a title/tag/image fallback from).
+    var card  = typeof cardOrSlug === "string" ? null : cardOrSlug;
+    var slug  = card ? card.dataset.project : cardOrSlug;
     var data  = PROJECTS[slug];
-    var title = card.querySelector(".card__title");
-    var desc  = card.querySelector(".card__desc");
-    var img   = card.querySelector(".card__media img");
+    var title = card ? card.querySelector(".card__title") : null;
+    var desc  = card ? card.querySelector(".card__desc") : null;
+    var img   = card ? card.querySelector(".card__media img") : null;
 
     titleEl.textContent = data ? data.client : (title ? title.textContent : "");
 
@@ -1869,13 +1953,13 @@ html.modal-open body{ overflow:hidden; }
       heroEl.className = "modal__hero";
       heroEl.innerHTML = '<div class="modal__hero-media"><img src="' + img.getAttribute("src") + '" alt="" /></div>';
     } else {
-      heroEl.className = "modal__hero";
+      heroEl.className = "modal__hero modal__hero--empty";
       heroEl.innerHTML = "";
     }
 
     if (data && data.details){
       detailsEl.innerHTML = data.details.map(renderBlock).join("");
-    } else {
+    } else if (card) {
       var tag = card.querySelector(".card__tag");
       var block = {
         h: title ? title.textContent : "",
@@ -1883,6 +1967,8 @@ html.modal-open body{ overflow:hidden; }
         copy: desc ? [desc.textContent] : []
       };
       detailsEl.innerHTML = renderBlock(block);
+    } else {
+      detailsEl.innerHTML = "";
     }
 
     clearTimeout(closeTimer);
@@ -2100,6 +2186,10 @@ html.modal-open body{ overflow:hidden; }
   closeBtn.addEventListener("click", closeModal);
   overlay.addEventListener("click", function(e){
     if (e.target === overlay) closeModal();
+  });
+
+  document.getElementById("approach-btn").addEventListener("click", function(){
+    openModal("approach");
   });
 
 })();
