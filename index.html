@@ -1941,13 +1941,23 @@ html.modal-open body{ overflow:hidden; }
   }
 
   /* ---------- swipe (or drag) down to dismiss ---------- */
+  // Real touch input drives this through the raw Touch Events
+  // (touchstart/touchmove/touchend) rather than Pointer Events: testing
+  // surfaced that a touch-originated pointer can stop delivering
+  // pointermove after just a couple of events once the gesture is
+  // underway, while its underlying touchmove keeps firing normally the
+  // whole time — pointermove silently going stale mid-drag meant the
+  // recorded distance/velocity at release almost never crossed the
+  // close threshold, so the modal sprang back open no matter how far or
+  // fast you'd actually swiped. Touch Events are the older, far more
+  // battle-tested API for exactly this kind of sustained drag gesture.
+  // Mouse dragging still goes through Pointer Events below.
   var swipe = null;
 
-  modalScroll.addEventListener("pointerdown", function(e){
+  function beginSwipe(x, y){
     swipe = {
-      pointerId: e.pointerId,
-      startX: e.clientX,
-      startY: e.clientY, lastY: e.clientY,
+      startX: x,
+      startY: y, lastY: y,
       startTime: performance.now(), lastTime: performance.now(),
       velocity: 0,
       dragging: false,
@@ -1955,12 +1965,12 @@ html.modal-open body{ overflow:hidden; }
       // its top can be a dismiss — otherwise it's just scrolling.
       atTop: modalScroll.scrollTop <= 0
     };
-  });
+  }
 
-  modalScroll.addEventListener("pointermove", function(e){
-    if (!swipe || e.pointerId !== swipe.pointerId) return;
-    var dy = e.clientY - swipe.startY;
-    var dx = e.clientX - swipe.startX;
+  function updateSwipe(x, y, preventDefault){
+    if (!swipe) return;
+    var dy = y - swipe.startY;
+    var dx = x - swipe.startX;
 
     if (!swipe.dragging){
       // Require the gesture to actually be vertical — otherwise a
@@ -1969,20 +1979,19 @@ html.modal-open body{ overflow:hidden; }
       if (swipe.atTop && dy > 8 && dy > Math.abs(dx) && modalScroll.scrollTop <= 0){
         swipe.dragging = true;
         modalEl.classList.add("modal--dragging");
-        modalScroll.setPointerCapture(e.pointerId);
       } else {
         return; // let the content scroll normally
       }
     }
 
-    e.preventDefault();
+    preventDefault();
     modalEl.style.transform = "translateY(" + Math.max(0, dy) + "px)";
     var now = performance.now(), dt = now - swipe.lastTime;
-    if (dt > 0) swipe.velocity = (e.clientY - swipe.lastY) / dt;   // px per ms
-    swipe.lastY = e.clientY; swipe.lastTime = now;
-  });
+    if (dt > 0) swipe.velocity = (y - swipe.lastY) / dt;   // px per ms
+    swipe.lastY = y; swipe.lastTime = now;
+  }
 
-  function endSwipe(e){
+  function endSwipe(){
     if (!swipe) return;
     if (swipe.dragging){
       var dy = swipe.lastY - swipe.startY;
@@ -2007,8 +2016,38 @@ html.modal-open body{ overflow:hidden; }
     }
     swipe = null;
   }
-  modalScroll.addEventListener("pointerup", endSwipe);
-  modalScroll.addEventListener("pointercancel", endSwipe);
+
+  modalScroll.addEventListener("pointerdown", function(e){
+    if (e.pointerType === "touch") return; // touch uses the Touch Event listeners below
+    swipe = null;
+    beginSwipe(e.clientX, e.clientY);
+    swipe.pointerId = e.pointerId;
+  });
+  modalScroll.addEventListener("pointermove", function(e){
+    if (!swipe || swipe.pointerId !== e.pointerId) return;
+    var wasDragging = swipe.dragging;
+    updateSwipe(e.clientX, e.clientY, function(){ e.preventDefault(); });
+    if (!wasDragging && swipe.dragging) modalScroll.setPointerCapture(e.pointerId);
+  });
+  modalScroll.addEventListener("pointerup", function(e){
+    if (!swipe || swipe.pointerId !== e.pointerId) return;
+    endSwipe();
+  });
+  modalScroll.addEventListener("pointercancel", function(e){
+    if (!swipe || swipe.pointerId !== e.pointerId) return;
+    endSwipe();
+  });
+
+  modalScroll.addEventListener("touchstart", function(e){
+    if (e.touches.length !== 1) return;
+    beginSwipe(e.touches[0].clientX, e.touches[0].clientY);
+  }, { passive: true });
+  modalScroll.addEventListener("touchmove", function(e){
+    if (!swipe || e.touches.length !== 1) return;
+    updateSwipe(e.touches[0].clientX, e.touches[0].clientY, function(){ e.preventDefault(); });
+  }, { passive: false });
+  modalScroll.addEventListener("touchend", endSwipe);
+  modalScroll.addEventListener("touchcancel", endSwipe);
 
   /* scroller.setPointerCapture() (above, for drag-scrolling) makes
      Chromium retarget the resulting click event to the scroller
