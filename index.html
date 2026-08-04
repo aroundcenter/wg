@@ -160,16 +160,17 @@ a{ color:inherit; }
   height:var(--nav-h);
   padding-inline:var(--nav-px);
 }
-/* A sticky element's "stuck" position is computed against its nearest
-   scrolling ancestor — pinning body to position:fixed while a modal is
-   open (below) changes that ancestor out from under it mid-frame, which
-   was making the nav jump/disappear right as the modal opened. Since a
-   stuck nav already sits at top:0, swapping to fixed at the same offset
-   lands in the identical spot with nothing to recompute.
+/* overflow:hidden on body while a modal is open (below) — needed to stop
+   desktop wheel-scroll of the page behind — has a side effect: it makes
+   body a scroll-container reference for position:sticky descendants, and
+   since body itself never actually scrolls (the window does), the nav
+   "unsticks" to its static position instead of staying pinned. Since a
+   stuck nav already sits at top:0, forcing fixed at the same offset while
+   modal-open lands in the identical spot with nothing to recompute.
    Going from sticky to fixed also takes the nav out of document flow,
-   though, collapsing the space it used to occupy and yanking everything
-   below it (the cards included) up by --nav-h — the padding-top on body
-   puts that space back so nothing else shifts. */
+   collapsing the space it used to occupy and yanking everything below it
+   (the cards included) up by --nav-h — the padding-top on body puts that
+   space back so nothing else shifts. */
 html.modal-open .nav{ position:fixed; top:0; left:0; right:0; }
 html.modal-open body{ padding-top:var(--nav-h); }
 .topbar{
@@ -1760,36 +1761,19 @@ html.modal-open body{ overflow:hidden; }
   var closeBtn  = document.getElementById("modal-close");
   var lastFocus = null;
   var closeTimer = null;
-  var lockedScrollY = 0;
-
-  // overflow:hidden on body (below) doesn't reliably stop the page behind
-  // from scrolling on touch devices once a nested scrollable element like
-  // the modal is being dragged — the page can still bleed through. Pinning
-  // body in place with position:fixed is the robust cross-browser fix.
-  function lockBodyScroll(){
-    lockedScrollY = window.scrollY || window.pageYOffset || 0;
-    document.body.style.position = "fixed";
-    document.body.style.top = "-" + lockedScrollY + "px";
-    document.body.style.left = "0";
-    document.body.style.right = "0";
-  }
-  function unlockBodyScroll(){
-    // Clear the fixed styles FIRST — while body is still position:fixed,
-    // it's the only content and has no normal-flow height, so the
-    // document has nothing to scroll and scrollTo would silently no-op.
-    // Restoring flow first gives the page its real scrollable range back,
-    // then scrollTo can actually land on the saved position. Both
-    // statements run synchronously in the same task, so the browser
-    // never paints the in-between (wrong-position) state.
-    document.body.style.position = "";
-    document.body.style.top = "";
-    document.body.style.left = "";
-    document.body.style.right = "";
-    // behavior:"instant" matters here: html has scroll-behavior:smooth
-    // globally, which scrollTo inherits by default — without overriding
-    // it, closing the modal made the page visibly glide back to its old
-    // position instead of just reappearing there.
-    window.scrollTo({ top: lockedScrollY, left: 0, behavior: "instant" });
+  // overflow:hidden on body (below) handles desktop wheel scroll, but
+  // doesn't stop touch-driven scrolling of the page behind a modal.
+  // position:fixed on body was tried as the fix for that, but repositioning
+  // the entire page forces the browser to recomposite all of it at once —
+  // on iOS Safari specifically, that recomposite could visibly stumble
+  // (a white flash, content briefly disappearing) when there was enough
+  // on-screen content to make the sudden re-layout expensive, worse the
+  // more of a card's imagery happened to be in view. Blocking touchmove
+  // directly on whatever's behind the modal is lighter: nothing about the
+  // page's own layout ever changes, so there's nothing to recomposite and
+  // nothing to restore on close either.
+  function blockBackdropTouchScroll(e){
+    if (!modalEl.contains(e.target)) e.preventDefault();
   }
 
   function renderBlock(block){
@@ -1910,10 +1894,10 @@ html.modal-open body{ overflow:hidden; }
 
     lastFocus = document.activeElement;
     document.documentElement.classList.add("modal-open");
-    lockBodyScroll();
     modalScroll.scrollTop = 0;
     closeBtn.focus();
     document.addEventListener("keydown", onModalKeydown);
+    document.addEventListener("touchmove", blockBackdropTouchScroll, { passive: false });
 
     // backdrop-filter needs its own GPU compositing layer, and building
     // one for the first time in the same frame the opacity transition
@@ -1930,10 +1914,16 @@ html.modal-open body{ overflow:hidden; }
 
   function closeModal(){
     document.documentElement.classList.remove("modal-open");
-    unlockBodyScroll();
     overlay.setAttribute("data-open", "false");
     document.removeEventListener("keydown", onModalKeydown);
-    if (lastFocus && typeof lastFocus.focus === "function") lastFocus.focus();
+    document.removeEventListener("touchmove", blockBackdropTouchScroll);
+    // preventScroll matters here for the same reason as the card's own
+    // mousedown/touchstart handling above: if the card that opened this
+    // modal isn't fully back in view, focusing it natively re-triggers
+    // the browser's scroll-into-view — this time on close. Since this
+    // call is entirely our own, not a native response to a click/tap,
+    // we can just tell it not to.
+    if (lastFocus && typeof lastFocus.focus === "function") lastFocus.focus({ preventScroll: true });
     // Wait out the close transition, then hide the overlay and tear down
     // the hero content — an iframe kept alive off-screen would otherwise
     // keep playing audio. Skipped if reopened before the timeout fires.
@@ -2033,17 +2023,32 @@ html.modal-open body{ overflow:hidden; }
     var card = el && el.closest(".card");
     if (card) openModal(card);
   });
-  /* Cards are tabindex="0" for keyboard access, so a mouse click also
+  /* Cards are tabindex="0" for keyboard access, so a click or tap also
      natively focuses them — and if the clicked card isn't fully inside
      the viewport (e.g. only its top edge has scrolled into view), the
      browser auto-scrolls the page to bring the whole focused element
      into view. That scroll happened invisibly while the modal covered
      it, then reappeared as the homepage having "jumped" the moment the
-     modal closed. preventDefault on mousedown blocks that native
-     focus-and-scroll without affecting the click handler above or
-     keyboard (Enter/Space) activation. */
-  scroller.addEventListener("mousedown", function(e){
-    if (e.target.closest(".card")) e.preventDefault();
+     modal closed.
+     preventDefault on mousedown/touchstart would block it, but on touch
+     it also suppresses the click event the browser synthesizes from the
+     tap — breaking tap-to-open entirely. Instead: capture the scroll
+     position right before the native focus-and-scroll can happen, then
+     snap back to it the instant focus actually lands on the card. Lets
+     the tap and its click through untouched. */
+  var preFocusScrollX = 0, preFocusScrollY = 0;
+  function captureScrollBeforeCardFocus(e){
+    if (!e.target.closest(".card")) return;
+    preFocusScrollX = window.scrollX;
+    preFocusScrollY = window.scrollY;
+  }
+  scroller.addEventListener("mousedown", captureScrollBeforeCardFocus);
+  scroller.addEventListener("touchstart", captureScrollBeforeCardFocus, { passive: true });
+  scroller.addEventListener("focusin", function(e){
+    if (!e.target.closest(".card")) return;
+    if (window.scrollX !== preFocusScrollX || window.scrollY !== preFocusScrollY){
+      window.scrollTo({ left: preFocusScrollX, top: preFocusScrollY, behavior: "instant" });
+    }
   });
   document.getElementById("track").addEventListener("keydown", function(e){
     if (e.key !== "Enter" && e.key !== " ") return;
