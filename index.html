@@ -477,7 +477,11 @@ html.modal-open body{ padding-top:var(--nav-h); }
 .approach-btn{
   position:fixed; right:24px; bottom:24px; z-index:90;
   display:inline-flex; align-items:center; justify-content:center;
-  padding:16px 26px;
+  /* Geometric centering (equal padding) still reads slightly low: pixel-
+     measured the actual rendered glyph ink and it sat ~1.25px closer to
+     the bottom edge than the top. Shifting 0.625px off the top and onto
+     the bottom nudges the ink itself to true optical center. */
+  padding:15.375px 26px 16.625px;
   border:0; border-radius:999px;
   background:var(--ink);
   color:#fff;
@@ -500,7 +504,7 @@ html.modal-open body{ padding-top:var(--nav-h); }
   .nav-links{ display:none; }
   .menu-toggle{ display:block; }
   :root{ --nav-h:60px; }
-  .approach-btn{ right:16px; bottom:16px; padding:14px 22px; font-size:14px; }
+  .approach-btn{ right:16px; bottom:16px; padding:13.4px 22px 14.6px; font-size:14px; }
 }
 
 /* ============================================================
