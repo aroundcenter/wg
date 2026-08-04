@@ -585,6 +585,7 @@ html.modal-open body{ overflow:hidden; }
      up into place; closing reverses the same distance back down. */
   transform:translateY(100%);
   transition:transform 420ms var(--ease-out);
+  will-change:transform;
 }
 .modal-overlay[data-open="true"] .modal{ transform:translateY(0); }
 /* Swipe/drag-to-dismiss tracks the pointer 1:1 while active — the
@@ -1604,6 +1605,12 @@ html.modal-open body{ overflow:hidden; }
       var dy = swipe.lastY - swipe.startY;
       var shouldClose = dy > 120 || swipe.velocity > 0.5;
       modalEl.classList.remove("modal--dragging");
+      // Force the browser to commit "transition re-enabled, still at the
+      // dragged position" before the next lines change the target value —
+      // otherwise both can land in the same paint and the close/spring-back
+      // transition never plays, which is why this felt smooth sometimes
+      // and snapped shut instantly other times.
+      void modalEl.offsetHeight;
       // Flip state (if closing) before clearing the inline transform,
       // so removing it reveals the already-correct CSS target and the
       // transition animates straight there in one motion, rather than
