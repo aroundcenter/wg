@@ -631,6 +631,12 @@ html.modal-open body{ overflow:hidden; }
   padding:var(--modal-hero-py) var(--gutter);
   display:flex; justify-content:center;
 }
+.modal__hero--carousel{
+  flex-direction:column;
+  align-items:center;
+  gap:16px;
+  padding-inline:0;
+}
 .modal__hero-media{
   position:relative;
   width:100%; max-width:1070px;
@@ -643,6 +649,37 @@ html.modal-open body{ overflow:hidden; }
   width:100%; height:100%;
   object-fit:cover;
 }
+.modal__hero-carousel{
+  display:flex;
+  width:100%;
+  overflow-x:auto;
+  scroll-snap-type:x mandatory;
+  overscroll-behavior-x:contain;
+  -webkit-overflow-scrolling:touch;
+  touch-action:pan-x;
+  scrollbar-width:none;
+  -ms-overflow-style:none;
+  gap:var(--gutter);
+  padding-inline:var(--gutter);
+}
+.modal__hero-carousel::-webkit-scrollbar{ display:none; }
+.modal__hero-carousel .modal__hero-media{
+  flex:0 0 auto;
+  width:100%;
+  max-width:none;
+  scroll-snap-align:center;
+}
+.modal__hero-dots{
+  display:flex; align-items:center; justify-content:center;
+  gap:8px;
+}
+.modal__hero-dot{
+  width:6px; height:6px; padding:0; border:0; border-radius:50%;
+  background:var(--rule);
+  cursor:pointer;
+  transition:background 160ms var(--ease-out), transform 160ms var(--ease-out);
+}
+.modal__hero-dot[aria-current="true"]{ background:var(--ink); transform:scale(1.3); }
 
 .modal__body{
   display:flex; flex-direction:column;
@@ -687,6 +724,7 @@ html.modal-open body{ overflow:hidden; }
   line-height:1.42;
 }
 .modal-block__p + .modal-block__p{ margin-top:1.42em; }
+.modal-block__p strong{ font-weight:700; }
 </style>
 </head>
 
@@ -1263,6 +1301,57 @@ html.modal-open body{ overflow:hidden; }
         { h: "My Role", dek: "Chief Creative Officer",
           copy: ["I led the creative vision and transformation of the Covered California brand, helping establish the strategic platform, guide the work across audiences and ensure cultural specificity strengthened one unified brand idea."] }
       ]
+    },
+    "skippable-preroll": {
+      client: "Skippable Pre-Roll",
+      video: [
+        '<iframe src="https://player.vimeo.com/video/1214351769?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="PepsiP2P"></iframe>',
+        '<iframe src="https://player.vimeo.com/video/1214351754?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="FASTFORWARDEtrade"></iframe>'
+      ],
+      details: [
+        { h: "Innovation & Invention", dek: "Pour 2 Pass",
+          copy: ["Turning the desire to skip an ad into an entirely new way to engage with one."] },
+        { h: "The Challenge",
+          copy: [
+            "At the time, 30-second pre-roll was one of the most sought-after formats in digital advertising.",
+            "The problem was that the entire industry was treating digital like television, and it wasn’t.",
+            "Audiences were being forced to sit through commercials they hadn’t chosen before reaching the content they actually wanted. Brands may have been buying guaranteed exposure, but they weren’t earning attention. The result was an experience built around the needs of advertisers rather than the behavior of people.",
+            "The challenge was to reinvent the most valuable format in digital by giving audiences something advertising rarely offered them:",
+            "<strong>Control</strong>."
+          ] },
+        { h: "The Invention",
+          copy: [
+            "The idea challenged one of advertising’s most deeply held assumptions: that a brand should do everything possible to stop someone from skipping its ad.",
+            "Instead, I asked a different question: <strong>What if skipping the ad became the experience?</strong>",
+            "The original patent was called “Pour 2 Pass” because the first execution was created for Pepsi. It combined two of my inventions: an interactive display called the “Bug Unit” and a new form of skippable pre-roll.",
+            "Together, they allowed people to engage with the brand and actively control how they experienced its advertising."
+          ] },
+        { h: "How It Worked",
+          copy: [
+            "As a traditional 30-second Pepsi pre-roll began, an interactive Bug Unit appeared with a simple call to action: <strong>Pour it and pass it.</strong>",
+            "By engaging with the Pepsi bottle and completing the pouring action, the viewer transformed the full 30-second commercial into a six-second, voice-over fast-forward.",
+            "The audience got to the content faster. Pepsi still delivered its message. And the act of skipping became a branded interaction rather than a rejection of the brand. This format and version of skipping would be integrated into numerous examples designed specifically for each brand."
+          ] },
+        { h: "The Resistance",
+          copy: [
+            "No salesperson across the organization wanted to sell it.",
+            "The response was always the same: <strong>“What brand would want someone to skip its ad?”</strong>",
+            "But that tension was the point.",
+            "People were already trying to avoid advertising. Instead of fighting their behavior, Pour 2 Pass respected it, and gave the brand a role in making the experience better.",
+            "It turned interruption into participation and gave audiences something advertising rarely offered at the time: control."
+          ] },
+        { h: "The Impact",
+          copy: [
+            "Pour 2 Pass helped introduce a new way of thinking about digital advertising: attention should be earned through interaction, not forced through interruption.",
+            "What began as an unconventional idea became patented intellectual property and one of five new formats I created at Viacom that helped reshape how brands could engage audiences through digital media.",
+            "The invention demonstrated that even skipping an advertisement could create value when the experience was designed around what people actually wanted. It is now one of the most famous ad formats in digital advertising."
+          ] },
+        { h: "My Role", dek: "Sole Inventor and Creative Director",
+          copy: [
+            "I conceived the format, developed the interaction model and combined it with my patented Bug Unit to create the original Pepsi experience.",
+            "The work was part of a broader innovation mandate in which I developed ten new advertising formats every month—resulting in five patented formats within a single year."
+          ] }
+      ]
     }
   };
 
@@ -1305,6 +1394,36 @@ html.modal-open body{ overflow:hidden; }
     return html;
   }
 
+  // Native scroll-snap, not the cards track's JS drag physics: an
+  // iframe's content is a separate document, so pointer-based dragging
+  // (setPointerCapture etc.) never sees moves that start over the video.
+  // Touch/trackpad panning is handled by the compositor and works
+  // regardless, which is why this leans on it instead.
+  function initHeroCarousel(){
+    var el = document.getElementById("modal-hero-carousel");
+    if (!el) return;
+    var dots = heroEl.querySelectorAll(".modal__hero-dot");
+    var dotTimer = null;
+
+    function updateDots(){
+      var i = Math.round(el.scrollLeft / el.clientWidth);
+      dots.forEach(function(d, idx){
+        if (idx === i) d.setAttribute("aria-current", "true");
+        else d.removeAttribute("aria-current");
+      });
+    }
+    el.addEventListener("scroll", function(){
+      clearTimeout(dotTimer);
+      dotTimer = setTimeout(updateDots, 60);
+    }, { passive: true });
+
+    dots.forEach(function(d, idx){
+      d.addEventListener("click", function(){
+        el.scrollTo({ left: idx * el.clientWidth, behavior: "smooth" });
+      });
+    });
+  }
+
   function openModal(card){
     var slug  = card.dataset.project;
     var data  = PROJECTS[slug];
@@ -1314,11 +1433,29 @@ html.modal-open body{ overflow:hidden; }
 
     titleEl.textContent = data ? data.client : (title ? title.textContent : "");
 
-    if (data && data.video){
-      heroEl.innerHTML = '<div class="modal__hero-media">' + data.video + '</div>';
+    var videos = data && data.video ? (Array.isArray(data.video) ? data.video : [data.video]) : null;
+
+    if (videos && videos.length > 1){
+      heroEl.className = "modal__hero modal__hero--carousel";
+      var mediaHtml = videos.map(function(v){
+        return '<div class="modal__hero-media">' + v + '</div>';
+      }).join("");
+      var dotsHtml = videos.map(function(_, i){
+        return '<button type="button" class="modal__hero-dot"' + (i === 0 ? ' aria-current="true"' : '') +
+               ' aria-label="Show video ' + (i + 1) + '"></button>';
+      }).join("");
+      heroEl.innerHTML =
+        '<div class="modal__hero-carousel" id="modal-hero-carousel">' + mediaHtml + '</div>' +
+        '<div class="modal__hero-dots">' + dotsHtml + '</div>';
+      initHeroCarousel();
+    } else if (videos){
+      heroEl.className = "modal__hero";
+      heroEl.innerHTML = '<div class="modal__hero-media">' + videos[0] + '</div>';
     } else if (img) {
+      heroEl.className = "modal__hero";
       heroEl.innerHTML = '<div class="modal__hero-media"><img src="' + img.getAttribute("src") + '" alt="" /></div>';
     } else {
+      heroEl.className = "modal__hero";
       heroEl.innerHTML = "";
     }
 
@@ -1376,6 +1513,7 @@ html.modal-open body{ overflow:hidden; }
   modalScroll.addEventListener("pointerdown", function(e){
     swipe = {
       pointerId: e.pointerId,
+      startX: e.clientX,
       startY: e.clientY, lastY: e.clientY,
       startTime: performance.now(), lastTime: performance.now(),
       velocity: 0,
@@ -1389,9 +1527,13 @@ html.modal-open body{ overflow:hidden; }
   modalScroll.addEventListener("pointermove", function(e){
     if (!swipe || e.pointerId !== swipe.pointerId) return;
     var dy = e.clientY - swipe.startY;
+    var dx = e.clientX - swipe.startX;
 
     if (!swipe.dragging){
-      if (swipe.atTop && dy > 8 && modalScroll.scrollTop <= 0){
+      // Require the gesture to actually be vertical — otherwise a
+      // horizontal swipe over the hero video carousel gets misread
+      // as a dismiss drag.
+      if (swipe.atTop && dy > 8 && dy > Math.abs(dx) && modalScroll.scrollTop <= 0){
         swipe.dragging = true;
         modalEl.classList.add("modal--dragging");
         modalScroll.setPointerCapture(e.pointerId);
