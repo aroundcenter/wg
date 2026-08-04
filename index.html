@@ -583,19 +583,28 @@ html.modal-open body{ overflow:hidden; }
   position:absolute; inset:0;
   /* --card-base, tinted enough to read as a distinct plane behind the
      modal's pure-white surface — a flat white-on-white scrim was too
-     close in value to tell the two apart. */
+     close in value to tell the two apart. Animating opacity on an
+     element that carries its own backdrop-filter is the part that was
+     still causing a hard cut instead of a fade in some engines — the
+     filter effect doesn't reliably interpolate through an ancestor's
+     alpha the way plain color/backdrop-filter values do. Transitioning
+     the background's own alpha and the blur radius directly (instead
+     of opacity) is the standard fix for that class of bug, and reads
+     as the blur genuinely building up over the cards rather than
+     appearing then having the cards cut in and out underneath it. */
+  background:rgba(224,223,216,0);
+  backdrop-filter:blur(0px);
+  -webkit-backdrop-filter:blur(0px);
+  transition:background-color 380ms var(--ease-out),
+             backdrop-filter 380ms var(--ease-out),
+             -webkit-backdrop-filter 380ms var(--ease-out);
+  will-change:backdrop-filter;
+}
+.modal-overlay[data-open="true"] .modal-overlay__scrim{
   background:rgba(224,223,216,.78);
   backdrop-filter:blur(20px);
   -webkit-backdrop-filter:blur(20px);
-  opacity:0;
-  transition:opacity 380ms var(--ease-out);
-  /* backdrop-filter needs its own GPU compositing layer — hinting for
-     one up front (rather than letting the browser build it on demand
-     the instant this becomes visible) is part of what avoids the flash
-     openModal()'s double rAF defer is the other half of. */
-  will-change:opacity;
 }
-.modal-overlay[data-open="true"] .modal-overlay__scrim{ opacity:1; }
 
 .modal{
   position:fixed;
