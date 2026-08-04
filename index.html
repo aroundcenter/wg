@@ -569,7 +569,15 @@ html.modal-open body{ overflow:hidden; }
 .modal-overlay{
   position:fixed; inset:0; z-index:300;
 }
-.modal-overlay[hidden]{ display:none; }
+/* inert rather than [hidden]/display:none: the scrim's backdrop-filter
+   needs its own GPU compositing layer, and display:none tears that
+   layer down completely, forcing a cold rebuild — and the flash it
+   causes — on every single open. inert keeps this permanently mounted
+   and painted (invisible only because the scrim itself sits at
+   opacity:0 by default) while still blocking interaction and hiding it
+   from assistive tech. The explicit pointer-events rule is a fallback
+   for browsers that don't implement inert's own default behavior. */
+.modal-overlay[inert]{ pointer-events:none; }
 
 .modal-overlay__scrim{
   position:absolute; inset:0;
@@ -923,7 +931,7 @@ html.modal-open body{ overflow:hidden; }
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <!-- ================= PROJECT MODAL ================= -->
-<div class="modal-overlay" id="modal-overlay" data-open="false" hidden>
+<div class="modal-overlay" id="modal-overlay" data-open="false" inert>
   <div class="modal-overlay__scrim" aria-hidden="true"></div>
   <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" tabindex="-1">
     <button class="modal__close" id="modal-close" aria-label="Close">
@@ -1517,6 +1525,220 @@ html.modal-open body{ overflow:hidden; }
             "It was to use the influence of one of the world’s most recognized pain relief brands to help change what happens when a Black patient says, “I am in pain.”"
           ] }
       ]
+    },
+    "alzheimers-association": {
+      client: "Alzheimer’s Association and Meta",
+      video: '<iframe src="https://player.vimeo.com/video/1214351489?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="ReCognition_Meta"></iframe>',
+      details: [
+        { h: "Experience Design", dek: "Re:Cognition",
+          copy: [
+            "Using wearable technology to help people living with Alzheimer’s recognize the people and relationships that matter most.",
+            "Confidential concept. Currently in development."
+          ] },
+        { h: "The Challenge",
+          copy: [
+            "For many people, an Alzheimer’s or dementia diagnosis changes how they see themselves long before it changes how others see them.",
+            "The fear of forgetting a name, missing an important detail or becoming confused in public can create embarrassment and anxiety. Rather than risk having others notice, many people begin withdrawing from friends, family and the places they once enjoyed.",
+            "They stay home.",
+            "They stop participating.",
+            "Their world becomes smaller.",
+            "That isolation can come at the exact moment when connection matters most. Social isolation has been associated with cognitive decline, while continued social engagement may help protect cognitive function and provide meaningful benefits for people living with dementia.",
+            "The challenge was not simply to help someone recognize a face.",
+            "It was to give them the confidence to leave home, enter a room and continue engaging with the world around them.",
+            "How could technology make someone feel less afraid of what they might forget and more confident in everything they can still experience?"
+          ] },
+        { h: "The Insight",
+          copy: [
+            "A person may forget a name without losing the emotional connection attached to it.",
+            "The memories are still part of them. Accessing those memories becomes the challenge.",
+            "We asked whether technology could serve as a gentle bridge between seeing someone and remembering who they are.",
+            "Not by replacing human connection, but by helping preserve it."
+          ] },
+        { h: "The Idea", dek: "Re:Cognition",
+          copy: [
+            "Re:Cognition is a product experience created for Meta glasses that helps people living with Alzheimer’s identify the people around them.",
+            "Using visual recognition and artificial intelligence, the glasses recognize a familiar face and privately provide the wearer with helpful context such as the person’s name, their relationship and meaningful information about their shared life.",
+            "A face becomes a name.",
+            "A name becomes a relationship.",
+            "And a relationship can unlock a memory."
+          ] },
+        { h: "How It Works",
+          copy: [
+            "Family members and caregivers help create a trusted circle of recognized people and personal information.",
+            "When the wearer looks at someone within that circle, Re provides a discreet prompt through the glasses. The experience is designed to feel simple, private and natural, allowing the wearer to remain present in the interaction.",
+            "The technology does not announce what the person has forgotten.",
+            "It quietly helps them remember."
+          ] },
+        { h: "The Film", dek: "Watch the Re Film",
+          copy: [
+            "The film demonstrates how Re could transform an everyday interaction between someone living with Alzheimer’s and the people they love.",
+            "It begins with the uncertainty of seeing a face that feels familiar but cannot be placed. Through the Re experience, the wearer receives the context needed to reconnect that face with a name, a relationship and a shared history.",
+            "The film is not simply a demonstration of technology.",
+            "It is a story about dignity, independence and the possibility of preserving human connection for a little longer."
+          ] },
+        { h: "The Collaboration",
+          copy: [
+            "Re represents the first time Meta has worked with an agency on product development.",
+            "The collaboration brought together the reach and advocacy of the Alzheimer’s Association, Meta’s wearable technology and our experience design and creative thinking to imagine a new application for an existing product.",
+            "Rather than creating a campaign around the technology, we worked together to explore how the product itself could create meaningful human impact."
+          ] },
+        { h: "The Potential",
+          copy: [
+            "Re explores a future where wearable technology does more than provide information.",
+            "It can support independence.",
+            "It can reduce uncertainty.",
+            "It can help families remain connected through some of the most difficult moments of Alzheimer’s.",
+            "The idea is not intended to replace caregivers, medical professionals or human connection. It is designed to give people another form of support when memory can no longer do all the work on its own."
+          ] },
+        { h: "My Role", dek: "Chief Creative Officer and Product Innovator",
+          copy: [
+            "I created the original Re idea and led the creative vision for the product experience.",
+            "I helped bring the Alzheimer’s Association and Meta together around a shared ambition and guided the idea from a creative concept toward a potentially meaningful tool for people living with Alzheimer’s and the families who love them.",
+            "Re reflects a belief that has shaped my career.",
+            "The most powerful idea is not always an advertisement. Sometimes it is a product that can change someone’s life."
+          ] }
+      ]
+    },
+    "progressive": {
+      client: "Progressive",
+      video: '<iframe src="https://player.vimeo.com/video/1214351721?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="progressive_-_watch_party__30 (1080p)"></iframe>',
+      details: [
+        { h: "Audience Expansion", dek: "Watch Party",
+          copy: [
+            "Reimagining Kid ’n Play’s iconic House Party for a new generation and introducing Progressive to an entirely different audience through humor and nostalgia."
+          ] },
+        { h: "The Challenge",
+          copy: [
+            "For more than 20 years, Progressive had one agency responsible for its broadcast advertising, Arnold Worldwide.",
+            "During that time, no other agency had created or produced a television commercial for the brand.",
+            "VML had been brought in to develop social activations alongside Progressive’s NFL work. But as we looked at the audience the brand was trying to reach, we saw an opportunity that extended far beyond social.",
+            "Progressive had built some of the most recognizable advertising in the industry. The challenge was finding a way to bring a different audience into that world without abandoning the humor and personality that made the brand successful.",
+            "We needed an idea strong enough to reach a new demographic, earn its place within an established brand platform and convince Progressive to let a different agency create broadcast work for the first time in more than two decades."
+          ] },
+        { h: "The Opportunity",
+          copy: [
+            "Nostalgia has the power to make something familiar feel new again.",
+            "Characters, stories, music and moments from the 1980s and 1990s continue to connect generations. For the people who experienced them the first time, they create an immediate emotional connection. For younger audiences, they offer a new way into the culture that shaped what they see today.",
+            "The opportunity was not simply to bring something back.",
+            "It was to bring it forward.",
+            "We wanted to take a story people loved, place it within a modern setting and use it to introduce Progressive to an audience the brand had been working to reach."
+          ] },
+        { h: "The Cultural Icon",
+          copy: [
+            "Few films capture the energy, humor and style of early 1990s culture like House Party.",
+            "Written and directed by Reginald Hudlin and starring Kid ’n Play, the film became a landmark in Black cinema and helped define an era of music, dance, fashion and comedy.",
+            "In December 2022, House Party was selected for preservation in the National Film Registry by the Library of Congress for its cultural, historic and aesthetic significance.",
+            "If we were going to use nostalgia to connect Progressive with a new audience, there was no better party to bring back."
+          ] },
+        { h: "The Idea", dek: "Watch Party",
+          copy: [
+            "We reunited Kid ’n Play and reimagined the spirit of House Party as a modern football watch party.",
+            "The film brought Progressive’s Replay platform together with the humor, energy and unmistakable visual language of the original movie.",
+            "Kid and Play find themselves in a familiar misunderstanding. This time, the solution is a Replay challenge flag that allows them to revisit what was said and settle the moment.",
+            "The spot included references designed to reward longtime fans while welcoming a new generation into the experience. The flattop fade returned. The iconic Kick Step returned, performed by Ashley Everett, Beyoncé’s longtime dance captain. And the feeling of House Party returned in a way that felt current rather than recreated.",
+            "The work did not simply borrow from nostalgia.",
+            "It used nostalgia to create something new."
+          ] },
+        { h: "The Film", dek: "Watch Party",
+          copy: [
+            "The film opens inside a lively football watch party filled with the energy, music and movement associated with Kid ’n Play.",
+            "When a misunderstanding unfolds between the duo, Progressive’s Replay challenge flag becomes the comedic device that helps them revisit the moment.",
+            "The spot blends football, humor and hip hop culture while remaining true to the tone of Progressive’s broader NFL platform.",
+            "It features Ashley Everett, Beyoncé’s longtime dance captain, performing a new version of Kid ’n Play’s signature Kick Step. The film also brings back the flattop fade and features music from Flyana Boss.",
+            "Every detail was created to honor the legacy of House Party while introducing its energy to an entirely new generation."
+          ] },
+        { h: "Breaking Through",
+          copy: [
+            "Watch Party began as an idea for social.",
+            "We believed it could be much bigger.",
+            "VML presented the concept as a broadcast opportunity for the Super Bowl and earned the trust to take the work from idea through production.",
+            "That decision marked the first time in more than 20 years that an agency outside Progressive’s broadcast agency of record created and produced a television commercial for the brand.",
+            "It was more than winning an assignment.",
+            "It was proof that a culturally relevant idea could open a door that had remained closed for decades."
+          ] },
+        { h: "The Moment",
+          copy: [
+            "Watch Party aired during Super Bowl LVIII.",
+            "The game became the most watched American television broadcast in a generation, averaging more than 123 million viewers.",
+            "When the game went into overtime, Watch Party became the first commercial to air after the overtime coin toss, making it the most viewed commercial of the entire evening.",
+            "An idea that began as a social activation became a Super Bowl commercial seen during one of the most watched moments in television history."
+          ] },
+        { h: "The Impact",
+          copy: [
+            "Watch Party helped Progressive connect with an audience that had not traditionally seen itself reflected in the brand’s advertising.",
+            "By bringing back Kid ’n Play and reimagining a film deeply embedded in popular culture, Progressive entered a conversation that extended beyond insurance and football.",
+            "The work demonstrated that nostalgia is most powerful when it does more than remind people of what they loved.",
+            "It can introduce a brand to new audiences.",
+            "It can connect generations.",
+            "And it can turn a familiar story into an entirely new opportunity."
+          ] },
+        { h: "My Role", dek: "Chief Experience Design Officer",
+          copy: [
+            "I identified the opportunity to expand VML’s social assignment into broadcast and led the creative vision for Watch Party.",
+            "I helped shape the strategy around nostalgia, brought forward the idea of reimagining House Party and guided the work from concept through production.",
+            "The project represents one of the things I value most about creative leadership.",
+            "Seeing an opportunity that does not officially exist, building an idea strong enough to earn trust and opening a door that had been closed for more than 20 years."
+          ] }
+      ]
+    },
+    "blackweek": {
+      client: "Blackweek",
+      video: '<iframe src="https://player.vimeo.com/video/1214351488?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="Blackweek2025"></iframe>',
+      details: [
+        { h: "Experiential", dek: "Culture Is the Economy",
+          copy: [
+            "Building the fastest growing culture focused conference in the United States and creating a new space for ideas, influence and opportunity."
+          ] },
+        { h: "The Challenge",
+          copy: [
+            "Culture drives what people watch, wear, buy, share and believe.",
+            "Yet the people shaping culture have historically been excluded from many of the rooms where its economic value is discussed, distributed and decided.",
+            "The challenge was not to create another conference about diversity.",
+            "It was to build a new kind of experience where culture could be examined as one of the most powerful economic forces in the world and where the people shaping it could have a meaningful role in defining what comes next."
+          ] },
+        { h: "The Idea", dek: "Blackweek",
+          copy: [
+            "Blackweek was created as a place for honest conversations about culture, creativity, technology, business and power.",
+            "A place where leaders, creators, entrepreneurs and brands could come together to exchange ideas, challenge convention and create opportunity.",
+            "The ambition was to build more than an annual event.",
+            "It was to create an intellectual, cultural and economic platform with the power to influence industries."
+          ] },
+        { h: "The Experience",
+          copy: [
+            "Every element of Blackweek was created with intention and care.",
+            "From the speakers and programming to the visual identity, stage design, partnerships, hospitality and energy inside the building, every detail was designed to make people feel that they were part of something important.",
+            "Spring Studios, one of the most sought after event spaces in the country, became the home of an experience that felt more like a cultural festival than a traditional business conference.",
+            "The environment was elevated but never exclusive. Provocative but always purposeful. Every conversation was designed to challenge thinking, create connection and move people toward action."
+          ] },
+        { h: "The Growth",
+          copy: [
+            "In its first year, Blackweek welcomed approximately 1,300 attendees.",
+            "By year two, attendance grew to approximately 3,000 and the event sold out.",
+            "Now entering its third year, Blackweek has become the fastest growing culture focused conference in the United States.",
+            "That growth was not driven by novelty alone. It reflected a clear demand for a space where culture could be discussed with the seriousness, ambition and economic importance it deserves."
+          ] },
+        { h: "The Business Impact",
+          copy: [
+            "Most conferences take approximately five years to break even.",
+            "Blackweek did it in two.",
+            "Through strong partnerships, growing attendance and a clear point of view, we built an experience that was not only culturally relevant, but commercially viable.",
+            "The result is a platform with the foundation to grow beyond a conference into a larger cultural institution."
+          ] },
+        { h: "The Impact",
+          copy: [
+            "Blackweek brought thousands of people together to have conversations that were not happening anywhere else in quite the same way.",
+            "It gave established leaders a platform to share what they had learned. It gave emerging voices access to people and opportunities that could change their careers. It gave brands a deeper understanding of the cultural forces shaping their businesses.",
+            "Most importantly, it created a space where culture was not treated as a trend, a category or an afterthought.",
+            "It was recognized as the engine moving everything forward."
+          ] },
+        { h: "My Role", dek: "Cofounder",
+          copy: [
+            "As a cofounder, I helped shape Blackweek from an ambitious idea into a nationally recognized cultural experience.",
+            "My role has touched every part of the platform, including its positioning, creative vision, programming, partnerships, storytelling and overall experience.",
+            "Blackweek represents what I believe creativity can do at its best.",
+            "It can bring people together, open doors, shift conversations and create something the world did not know it needed until it existed."
+          ] }
+      ]
     }
   };
 
@@ -1671,7 +1893,7 @@ html.modal-open body{ overflow:hidden; }
     }
 
     clearTimeout(closeTimer);
-    overlay.hidden = false;
+    overlay.removeAttribute("inert");
     // Force layout so the browser commits the closed starting position
     // before the next line flips to open — otherwise both states can
     // land in the same paint and the transition never plays.
@@ -1709,7 +1931,7 @@ html.modal-open body{ overflow:hidden; }
     clearTimeout(closeTimer);
     closeTimer = setTimeout(function(){
       if (overlay.getAttribute("data-open") === "false"){
-        overlay.hidden = true;
+        overlay.setAttribute("inert", "");
         heroEl.innerHTML = "";
       }
     }, 450);
@@ -1801,6 +2023,18 @@ html.modal-open body{ overflow:hidden; }
     var el = document.elementFromPoint(e.clientX, e.clientY);
     var card = el && el.closest(".card");
     if (card) openModal(card);
+  });
+  /* Cards are tabindex="0" for keyboard access, so a mouse click also
+     natively focuses them — and if the clicked card isn't fully inside
+     the viewport (e.g. only its top edge has scrolled into view), the
+     browser auto-scrolls the page to bring the whole focused element
+     into view. That scroll happened invisibly while the modal covered
+     it, then reappeared as the homepage having "jumped" the moment the
+     modal closed. preventDefault on mousedown blocks that native
+     focus-and-scroll without affecting the click handler above or
+     keyboard (Enter/Space) activation. */
+  scroller.addEventListener("mousedown", function(e){
+    if (e.target.closest(".card")) e.preventDefault();
   });
   document.getElementById("track").addEventListener("keydown", function(e){
     if (e.key !== "Enter" && e.key !== " ") return;
