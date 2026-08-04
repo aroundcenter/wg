@@ -641,7 +641,7 @@ html.modal-open body{ overflow:hidden; }
   position:relative;
   width:100%; max-width:1070px;
   aspect-ratio:16/9;
-  background:#d9d9d9;
+  background:#000;
   overflow:hidden;
 }
 .modal__hero-media img{
@@ -696,16 +696,12 @@ html.modal-open body{ overflow:hidden; }
    copy at 8px. Blocks with a dek (a named sub-title, e.g. "Brand
    Anthem") sit tight against their heading — 0 gap plus the heading
    pulling in 4px further, so it slightly overlaps the dek's own
-   leading — then 16px before the copy. The one block with a lead
-   sentence before its dek (The Transformation) nests differently:
-   heading-to-lead at 8px, that pair to the dek at 16px, then back
-   down to 8px before the copy. */
+   leading — then 16px before the copy. */
 .modal-block{ display:flex; flex-direction:column; gap:8px; }
 .modal-block--has-dek{ gap:16px; }
 .modal-block__head{ display:flex; flex-direction:column; gap:8px; }
 .modal-block--has-dek .modal-block__head{ gap:0; }
 .modal-block--has-dek .modal-block__head .modal-block__h{ margin-bottom:-4px; }
-.modal-block__intro{ display:flex; flex-direction:column; gap:16px; }
 .modal-block__h{
   font-size:var(--detail-h);
   font-weight:700;
@@ -725,6 +721,7 @@ html.modal-open body{ overflow:hidden; }
 }
 .modal-block__p + .modal-block__p{ margin-top:1.42em; }
 .modal-block__p strong{ font-weight:700; }
+.modal-block__p .heavy{ font-weight:900; }
 </style>
 </head>
 
@@ -1275,8 +1272,9 @@ html.modal-open body{ overflow:hidden; }
             "Covered California was facing a critical business problem: enrollment was declining, and the brand was struggling to connect with the breadth of communities it was created to serve.",
             "California is one of the most diverse places in the world, yet the brand’s communications did not fully reflect the cultures, experiences and realities of its people. Reaching a broader audience required more than translating a general-market campaign. It required a new way of seeing—and speaking to—California."
           ] },
-        { h: "The Transformation", lead: "We repositioned Covered California around a simple but powerful idea:", dek: "For the Love of Californians",
+        { h: "The Transformation",
           copy: [
+            "We repositioned Covered California around a simple but powerful idea: <strong>For the Love of Californians.</strong>",
             "The platform transformed Covered California from a health-insurance marketplace into a brand that demonstrated genuine care for the people of the state.",
             "Instead of treating different communities as separate audiences on the margins, we built a unifying brand idea flexible enough to celebrate what Californians share while speaking authentically to the experiences that make each community distinct.",
             "The result was a more human, inclusive and culturally relevant expression of the brand—and its best-performing campaign in years."
@@ -1317,7 +1315,7 @@ html.modal-open body{ overflow:hidden; }
             "The problem was that the entire industry was treating digital like television, and it wasn’t.",
             "Audiences were being forced to sit through commercials they hadn’t chosen before reaching the content they actually wanted. Brands may have been buying guaranteed exposure, but they weren’t earning attention. The result was an experience built around the needs of advertisers rather than the behavior of people.",
             "The challenge was to reinvent the most valuable format in digital by giving audiences something advertising rarely offered them:",
-            "<strong>Control</strong>."
+            "<span class=\"heavy\">Control</span>."
           ] },
         { h: "The Invention",
           copy: [
@@ -1366,29 +1364,15 @@ html.modal-open body{ overflow:hidden; }
   var closeTimer = null;
 
   function renderBlock(block){
-    // Three shapes, matching Figma's own nesting exactly (measured via
+    // Two shapes, matching Figma's own nesting exactly (measured via
     // node metadata, not eyeballed):
     //  - heading only:            h -8px- copy
     //  - heading + sub-title:     h -(-4px, overlapping)- dek -16px- copy
-    //  - heading + lead + dek (Transformation only):
-    //                             [h -8px- lead] -16px- dek -8px- copy
-    var html;
-    if (block.lead){
-      html = '<div class="modal-block modal-block--intro">';
-      html += '<div class="modal-block__intro">';
-      html +=   '<div class="modal-block__head">';
-      html +=     '<h3 class="modal-block__h">' + block.h + '</h3>';
-      html +=     '<p class="modal-block__p">' + block.lead + '</p>';
-      html +=   '</div>';
-      html +=   '<p class="modal-block__dek">' + block.dek + '</p>';
-      html += '</div>';
-    } else {
-      html = '<div class="modal-block' + (block.dek ? ' modal-block--has-dek' : '') + '">';
-      html += '<div class="modal-block__head">';
-      html +=   '<h3 class="modal-block__h">' + block.h + '</h3>';
-      if (block.dek) html += '<p class="modal-block__dek">' + block.dek + '</p>';
-      html += '</div>';
-    }
+    var html = '<div class="modal-block' + (block.dek ? ' modal-block--has-dek' : '') + '">';
+    html += '<div class="modal-block__head">';
+    html +=   '<h3 class="modal-block__h">' + block.h + '</h3>';
+    if (block.dek) html += '<p class="modal-block__dek">' + block.dek + '</p>';
+    html += '</div>';
     block.copy.forEach(function(p){ html += '<p class="modal-block__p">' + p + '</p>'; });
     html += '</div>';
     return html;
