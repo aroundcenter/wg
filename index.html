@@ -1280,7 +1280,10 @@ html.modal-open body{ overflow:hidden; }
   var PROJECTS = {
     "covered-california": {
       client: "Covered California",
-      video: '<iframe src="https://player.vimeo.com/video/1214351487?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="CoveredCalifornia_90"></iframe>',
+      video: [
+        '<iframe src="https://player.vimeo.com/video/1214351487?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="CoveredCalifornia_90"></iframe>',
+        '<iframe src="https://player.vimeo.com/video/1214351490?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="Covered_California_2025_Backyard_30s_GM_16x9"></iframe>'
+      ],
       details: [
         { h: "Brand Transformation", dek: "For the Love of Californians",
           copy: ["Rebuilding relevance by creating a brand that saw, understood and spoke to the full diversity of California."] },
@@ -1746,7 +1749,11 @@ html.modal-open body{ overflow:hidden; }
     if (!swipe) return;
     if (swipe.dragging){
       var dy = swipe.lastY - swipe.startY;
-      var shouldClose = dy > 120 || swipe.velocity > 0.5;
+      // Was dy > 120 || velocity > 0.5 (500px/s) — a moderate, natural
+      // swipe that was neither that long nor that fast sprang back open
+      // instead of closing, which read as "sometimes hard to close."
+      // Loosened to commit on a shorter drag or a gentler flick.
+      var shouldClose = dy > 80 || swipe.velocity > 0.35;
       modalEl.classList.remove("modal--dragging");
       // Force the browser to commit "transition re-enabled, still at the
       // dragged position" before the next lines change the target value —
