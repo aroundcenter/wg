@@ -654,13 +654,21 @@ html.modal-open body{ overflow:hidden; }
   max-width:520px;
   color:var(--ink);
 }
+/* Gaps measured from the Figma node's own layout, not eyeballed:
+   heading-only blocks (The Challenge, The Impact) go straight to
+   copy at 8px. Blocks with a dek (a named sub-title, e.g. "Brand
+   Anthem") sit tight against their heading — 0 gap plus the heading
+   pulling in 4px further, so it slightly overlaps the dek's own
+   leading — then 16px before the copy. The one block with a lead
+   sentence before its dek (The Transformation) nests differently:
+   heading-to-lead at 8px, that pair to the dek at 16px, then back
+   down to 8px before the copy. */
 .modal-block{ display:flex; flex-direction:column; gap:8px; }
-/* Blocks with a dek (a named sub-title, e.g. "Brand Anthem") get more
-   room before the body copy, and their heading pulls in 4px closer
-   to the dek beneath it — headings alone (The Challenge, The Impact)
-   keep the tighter default. */
 .modal-block--has-dek{ gap:16px; }
-.modal-block--has-dek .modal-block__h{ margin-bottom:-4px; }
+.modal-block__head{ display:flex; flex-direction:column; gap:8px; }
+.modal-block--has-dek .modal-block__head{ gap:0; }
+.modal-block--has-dek .modal-block__head .modal-block__h{ margin-bottom:-4px; }
+.modal-block__intro{ display:flex; flex-direction:column; gap:16px; }
 .modal-block__h{
   font-size:var(--detail-h);
   font-weight:900;
@@ -1269,11 +1277,29 @@ html.modal-open body{ overflow:hidden; }
   var closeTimer = null;
 
   function renderBlock(block){
-    var cls = "modal-block" + (block.dek ? " modal-block--has-dek" : "");
-    var html = '<div class="' + cls + '">';
-    html += '<h3 class="modal-block__h">' + block.h + '</h3>';
-    if (block.lead) html += '<p class="modal-block__p">' + block.lead + '</p>';
-    if (block.dek)  html += '<p class="modal-block__dek">' + block.dek + '</p>';
+    // Three shapes, matching Figma's own nesting exactly (measured via
+    // node metadata, not eyeballed):
+    //  - heading only:            h -8px- copy
+    //  - heading + sub-title:     h -(-4px, overlapping)- dek -16px- copy
+    //  - heading + lead + dek (Transformation only):
+    //                             [h -8px- lead] -16px- dek -8px- copy
+    var html;
+    if (block.lead){
+      html = '<div class="modal-block modal-block--intro">';
+      html += '<div class="modal-block__intro">';
+      html +=   '<div class="modal-block__head">';
+      html +=     '<h3 class="modal-block__h">' + block.h + '</h3>';
+      html +=     '<p class="modal-block__p">' + block.lead + '</p>';
+      html +=   '</div>';
+      html +=   '<p class="modal-block__dek">' + block.dek + '</p>';
+      html += '</div>';
+    } else {
+      html = '<div class="modal-block' + (block.dek ? ' modal-block--has-dek' : '') + '">';
+      html += '<div class="modal-block__head">';
+      html +=   '<h3 class="modal-block__h">' + block.h + '</h3>';
+      if (block.dek) html += '<p class="modal-block__dek">' + block.dek + '</p>';
+      html += '</div>';
+    }
     block.copy.forEach(function(p){ html += '<p class="modal-block__p">' + p + '</p>'; });
     html += '</div>';
     return html;
