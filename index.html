@@ -607,7 +607,10 @@ html.modal-open body{ overflow:hidden; }
 .modal__scroll{
   flex:1 1 auto;
   overflow-y:auto;
-  overscroll-behavior:contain;
+  /* "none" rather than "contain": contain still lets the browser's own
+     rubber-band bounce play at the top edge, which fights the custom
+     swipe-to-dismiss drag below and makes the modal feel sticky to close. */
+  overscroll-behavior:none;
   -webkit-overflow-scrolling:touch;
   scrollbar-width:none;
   -ms-overflow-style:none;
