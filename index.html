@@ -213,13 +213,14 @@ html.modal-open body{ padding-top:var(--nav-h); }
 }
 .menu-toggle img{ width:24px; height:24px; display:block; }
 
-/* mobile menu sheet */
+/* mobile menu sheet — z-index above .nav (100) so the header bar is
+   fully covered while open, instead of showing through underneath. */
 .menu-sheet{
-  position:fixed; inset:0; z-index:99;
+  position:fixed; inset:0; z-index:150;
   background:var(--paper);
   display:flex; flex-direction:column; justify-content:center;
-  gap:8px;
-  padding:0 var(--nav-px);
+  gap:0;
+  padding:0 var(--nav-px) 0 calc(var(--nav-px) + 40px);
   opacity:0; visibility:hidden;
   transition:opacity 260ms var(--ease-out), visibility 260ms;
 }
@@ -823,6 +824,11 @@ html.modal-open body{ overflow:hidden; }
 </header>
 
 <div class="menu-sheet" id="menu-sheet" data-open="false" aria-hidden="true">
+  <button type="button" class="modal__close" id="menu-close" aria-label="Close menu">
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M6 6l12 12M18 6L6 18" stroke="#fff" stroke-width="1.6" stroke-linecap="round" />
+    </svg>
+  </button>
   <a class="nav-link" href="#work">Work</a>
   <a class="nav-link" href="#about">About</a>
   <a class="nav-link" href="#" data-action="resume">Resume</a>
@@ -1126,14 +1132,26 @@ html.modal-open body{ overflow:hidden; }
   });
 
   /* ---------- mobile menu ---------- */
-  var toggle = document.getElementById("menu-toggle");
-  var sheet  = document.getElementById("menu-sheet");
+  var toggle   = document.getElementById("menu-toggle");
+  var sheet    = document.getElementById("menu-sheet");
+  var menuNav  = document.querySelector(".nav");
+  var menuClose = document.getElementById("menu-close");
+  // overflow:hidden on body stops desktop wheel-scroll but not
+  // touch-driven scrolling of the page behind the sheet. Unlike the
+  // project modal, the sheet has no internal scrollable content of its
+  // own, so every touchmove while it's open is blocked outright rather
+  // than only the ones outside some scrollable region.
+  function blockMenuTouchScroll(e){
+    e.preventDefault();
+  }
   function openMenu(){
     sheet.dataset.open = "true";
     sheet.setAttribute("aria-hidden","false");
     toggle.setAttribute("aria-expanded","true");
     toggle.setAttribute("aria-label","Close menu");
     document.body.style.overflow = "hidden";
+    document.addEventListener("touchmove", blockMenuTouchScroll, { passive:false });
+    menuNav.setAttribute("inert","");
   }
   function closeMenu(){
     if (sheet.dataset.open !== "true") return;
@@ -1142,10 +1160,13 @@ html.modal-open body{ overflow:hidden; }
     toggle.setAttribute("aria-expanded","false");
     toggle.setAttribute("aria-label","Open menu");
     document.body.style.overflow = "";
+    document.removeEventListener("touchmove", blockMenuTouchScroll);
+    menuNav.removeAttribute("inert");
   }
   toggle.addEventListener("click", function(){
     sheet.dataset.open === "true" ? closeMenu() : openMenu();
   });
+  menuClose.addEventListener("click", closeMenu);
   sheet.addEventListener("click", function(e){
     if (e.target.tagName === "A") closeMenu();
   });
