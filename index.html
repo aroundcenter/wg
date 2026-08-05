@@ -75,7 +75,7 @@
   --modal-close-icon:  clamp(16px, calc(16px +  8 * (100vw - 390px) / 1050), 24px);
   --modal-hero-py:  clamp(32px, calc(32px + 32 * (100vw - 390px) / 1050), 64px);
   --modal-pl:       clamp(20px, calc(20px + 140 * (100vw - 390px) / 1050), 160px);
-  --detail-h:       clamp(24px, calc(24px + 15 * (100vw - 390px) / 1050), 39px);
+  --detail-h:       clamp(24px, calc(24px +  7 * (100vw - 390px) / 1050), 31px);
   --detail-sub:     clamp(18px, calc(18px +  7 * (100vw - 390px) / 1050), 25px);
   --detail-body:    clamp(15px, calc(15px +  3 * (100vw - 390px) / 1050), 18px);
   --detail-gap:     clamp(32px, calc(32px + 32 * (100vw - 390px) / 1050), 64px);
@@ -762,28 +762,18 @@ html.modal-open body{ overflow:hidden; }
   max-width:520px;
   color:var(--ink);
 }
-/* Gaps measured from the Figma node's own layout, not eyeballed:
-   heading-only blocks (The Challenge, The Impact) go straight to
-   copy at 8px. Blocks with a dek (a named sub-title, e.g. "Brand
-   Anthem") sit tight against their heading — 0 gap plus the heading
-   pulling in 4px further, so it slightly overlaps the dek's own
-   leading — then 16px before the copy. */
-.modal-block{ display:flex; flex-direction:column; gap:8px; }
-.modal-block--has-dek{ gap:16px; }
+/* Blocks with a dek (a named sub-title, e.g. "Brand Anthem") sit tight
+   against their heading — 0 gap plus the heading pulling in 4px further,
+   so it slightly overlaps the dek's own leading. */
+.modal-block{ display:flex; flex-direction:column; gap:16px; }
 .modal-block__head{ display:flex; flex-direction:column; gap:8px; }
 .modal-block--has-dek .modal-block__head{ gap:0; }
 .modal-block--has-dek .modal-block__head .modal-block__h{ margin-bottom:-4px; }
 .modal-block__h{
   font-size:var(--detail-h);
   font-weight:600;
-  line-height:1.42;
+  line-height:1.1;
 }
-/* The Approach page's headings are full sentences that wrap to two
-   lines, unlike the short 1-3 word headings in the case studies (which
-   this shared line-height was calibrated against, along with the
-   heading+dek -4px overlap below) — scoped here instead of changing
-   the shared value, so wrapped lines don't carry the same loose gap. */
-.modal--approach .modal-block__h{ line-height:1.15; }
 .modal-block__dek{
   font-size:var(--detail-sub);
   font-weight:500;
