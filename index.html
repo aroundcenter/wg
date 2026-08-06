@@ -56,8 +56,13 @@
   --hero-pt:      clamp(40px, calc(40px + 110 * (100vw - 390px) / 1050), 150px);
   --hero-min-h:   clamp(421px, calc(421px + 292 * (100vw - 390px) / 1050), 713px);
   --hero-h1:      clamp(29px, calc(29px + 25 * (100vw - 390px) / 1050), 54px);
-  --hero-h1-w:    clamp(215px, calc(215px + 405 * (100vw - 390px) / 1050), 620px);
-  --hero-photo-w: clamp(170px, calc(170px + 500 * (100vw - 390px) / 1050), 670px);
+  /* --hero-h1-w, --hero-photo-w and --hero-photo-x don't scale linearly
+     between mobile and desktop — they're tuned per-breakpoint (see the
+     piecewise overrides below) rather than a single clamp, so these are
+     just the floor values for viewports narrower than 390px. */
+  --hero-h1-w:    232px;
+  --hero-photo-w: 170px;
+  --hero-photo-x: 5%;
   --hero-photo-h: clamp(421px, calc(421px + 434 * (100vw - 390px) / 1050), 855px);
   --h1:        clamp(31px, calc(31px + 30 * (100vw - 390px) / 1050), 61px);
   --about-h:   clamp(25px, calc(25px + 14 * (100vw - 390px) / 1050), 39px);
@@ -111,6 +116,37 @@
   /* motion */
   --ease-out: cubic-bezier(.22,.61,.36,1);
 }
+
+/* ------------------------------------------------------------
+   Hero heading width, photo width and photo horizontal crop —
+   tuned per-breakpoint (Hero Playground) rather than a single
+   mobile->desktop clamp, since the values don't fall on a straight
+   line between the two endpoints. Each media query below is scoped
+   to its own non-overlapping range, so exactly one is ever active;
+   within a range the value still interpolates fluidly between that
+   range's two endpoints, matching every other token's pattern.
+   ------------------------------------------------------------ */
+@media (max-width:479px){ :root{ --hero-h1-w: clamp(232px, calc(232px + 33 * (100vw - 390px) / 90), 265px); } }
+@media (min-width:480px) and (max-width:599px){ :root{ --hero-h1-w: clamp(265px, calc(265px + 178 * (100vw - 480px) / 120), 443px); } }
+@media (min-width:600px) and (max-width:719px){ :root{ --hero-h1-w: clamp(308px, calc(443px - 135 * (100vw - 600px) / 120), 443px); } }
+@media (min-width:720px) and (max-width:899px){ :root{ --hero-h1-w: clamp(308px, calc(308px + 181 * (100vw - 720px) / 180), 489px); } }
+@media (min-width:900px) and (max-width:1199px){ :root{ --hero-h1-w: clamp(489px, calc(489px + 111 * (100vw - 900px) / 300), 600px); } }
+@media (min-width:1200px) and (max-width:1439px){ :root{ --hero-h1-w: clamp(600px, calc(600px + 40 * (100vw - 1200px) / 240), 640px); } }
+@media (min-width:1440px){ :root{ --hero-h1-w: 640px; } }
+
+@media (max-width:479px){ :root{ --hero-photo-w: clamp(170px, calc(170px + 99 * (100vw - 390px) / 90), 269px); } }
+@media (min-width:480px) and (max-width:599px){ :root{ --hero-photo-w: clamp(269px, calc(269px + 86 * (100vw - 480px) / 120), 355px); } }
+@media (min-width:600px) and (max-width:719px){ :root{ --hero-photo-w: clamp(355px, calc(355px + 61 * (100vw - 600px) / 120), 416px); } }
+@media (min-width:720px) and (max-width:899px){ :root{ --hero-photo-w: clamp(413px, calc(416px - 3 * (100vw - 720px) / 180), 416px); } }
+@media (min-width:900px) and (max-width:1199px){ :root{ --hero-photo-w: clamp(413px, calc(413px + 143 * (100vw - 900px) / 300), 556px); } }
+@media (min-width:1200px) and (max-width:1439px){ :root{ --hero-photo-w: clamp(556px, calc(556px + 114 * (100vw - 1200px) / 240), 670px); } }
+@media (min-width:1440px){ :root{ --hero-photo-w: 670px; } }
+
+@media (max-width:479px){ :root{ --hero-photo-x: clamp(5%, calc(5% + 1 * (100vw - 390px) / 90), 6%); } }
+@media (min-width:480px) and (max-width:599px){ :root{ --hero-photo-x: clamp(0%, calc(6% - 6 * (100vw - 480px) / 120), 6%); } }
+@media (min-width:600px) and (max-width:719px){ :root{ --hero-photo-x: clamp(0%, calc(0% + 33 * (100vw - 600px) / 120), 33%); } }
+@media (min-width:720px) and (max-width:899px){ :root{ --hero-photo-x: clamp(0%, calc(33% - 33 * (100vw - 720px) / 180), 33%); } }
+@media (min-width:900px){ :root{ --hero-photo-x: 0%; } }
 
 /* ============================================================
    3. BASE
@@ -278,14 +314,13 @@ html.modal-open body{ padding-top:var(--nav-h); }
   background-image:url('images/walter_hero_image.webp');
   background-repeat:no-repeat;
   background-size:cover;
-  background-position:left 8%;
+  background-position:var(--hero-photo-x) 8%;
 }
 /* One crop, one technique, at every width — two different treatments
    (a full-bleed mobile layer vs. this panel) used to switch over at
    719px, which made the photo visibly jump in scale/composition right
    at that boundary. */
 @media (max-width:719px){
-  .hero h1{ max-width:232px; }
   .hero-break{ display:inline; }
   .hero-break-desktop{ display:none; }
   .hero-nowrap-desktop{ white-space:normal; }
