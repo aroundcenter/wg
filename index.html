@@ -84,7 +84,7 @@
   --detail-h:       clamp(24px, calc(24px +  7 * (100vw - 390px) / 1050), 31px);
   --detail-sub:     clamp(18px, calc(18px +  7 * (100vw - 390px) / 1050), 25px);
   --detail-body:    clamp(15px, calc(15px +  3 * (100vw - 390px) / 1050), 18px);
-  --detail-gap:     clamp(64px, calc(64px + 32 * (100vw - 390px) / 1050), 96px);
+  --detail-gap:     clamp(96px, calc(96px + 32 * (100vw - 390px) / 1050), 128px);
 
   /* carousel */
   --cw:       clamp(320px, calc(320px + 70 * (100vw - 390px) / 1050), 390px);
@@ -840,6 +840,7 @@ html.modal-open body{ overflow:hidden; }
   color:#a88a5b;
   line-height:1.42;
 }
+.modal-block__dek--tight{ line-height:1.1; }
 .modal-block__p{
   font-size:var(--detail-body);
   font-weight:400;
@@ -1706,7 +1707,7 @@ html.modal-open body{ overflow:hidden; }
             "It can help families remain connected through some of the most difficult moments of Alzheimer’s.",
             "The idea is not intended to replace caregivers, medical professionals or human connection. It is designed to give people another form of support when memory can no longer do all the work on its own."
           ] },
-        { h: "My Role", dek: "Chief Creative Officer and Product Innovator",
+        { h: "My Role", dek: "Chief Creative Officer and Product Innovator", dekTight: true,
           copy: [
             "I created the original Re idea and led the creative vision for the product experience.",
             "I helped bring the Alzheimer’s Association and Meta together around a shared ambition and guided the idea from a creative concept toward a potentially meaningful tool for people living with Alzheimer’s and the families who love them.",
@@ -1944,7 +1945,7 @@ html.modal-open body{ overflow:hidden; }
     var html = '<div class="modal-block' + (block.dek ? ' modal-block--has-dek' : '') + '">';
     html += '<div class="modal-block__head">';
     html +=   '<h3 class="modal-block__h">' + block.h + '</h3>';
-    if (block.dek) html += '<p class="modal-block__dek">' + block.dek + '</p>';
+    if (block.dek) html += '<p class="modal-block__dek' + (block.dekTight ? ' modal-block__dek--tight' : '') + '">' + block.dek + '</p>';
     html += '</div>';
     block.copy.forEach(function(p){ html += '<p class="modal-block__p">' + p + '</p>'; });
     html += '</div>';
