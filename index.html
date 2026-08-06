@@ -56,8 +56,8 @@
   --hero-pt:      clamp(40px, calc(40px + 110 * (100vw - 390px) / 1050), 150px);
   --hero-min-h:   clamp(421px, calc(421px + 292 * (100vw - 390px) / 1050), 713px);
   --hero-h1:      clamp(29px, calc(29px + 25 * (100vw - 390px) / 1050), 54px);
-  --hero-h1-w:    clamp(150px, calc(150px + 470 * (100vw - 390px) / 1050), 620px);
-  --hero-photo-w: clamp(170px, calc(170px + 500 * (100vw - 390px) / 1050), 670px);
+  --hero-h1-w:    clamp(215px, calc(215px + 405 * (100vw - 390px) / 1050), 620px);
+  --hero-photo-w: clamp(140px, calc(140px + 530 * (100vw - 390px) / 1050), 670px);
   --hero-photo-h: clamp(421px, calc(421px + 434 * (100vw - 390px) / 1050), 855px);
   --h1:        clamp(31px, calc(31px + 30 * (100vw - 390px) / 1050), 61px);
   --about-h:   clamp(25px, calc(25px + 14 * (100vw - 390px) / 1050), 39px);
@@ -263,13 +263,10 @@ html.modal-open body{ padding-top:var(--nav-h); }
   top:0; right:0;
   width:var(--hero-photo-w);
   height:var(--hero-photo-h);
-  overflow:hidden;
-}
-.hero__photo img{
-  position:absolute; inset:0;
-  width:100%; height:100%;
-  object-fit:cover;
-  object-position:20% 8%;
+  background-image:url('images/walter_hero_image.webp');
+  background-repeat:no-repeat;
+  background-size:cover;
+  background-position:left 8%;
 }
 
 /* ============================================================
@@ -844,9 +841,7 @@ html.modal-open body{ overflow:hidden; }
   <!-- ================= HERO ================= -->
   <section class="hero" data-node-id="41:1859">
     <h1><strong>Creative leader, inventor, and entrepreneur,</strong> building brands, experiences, and ideas <strong>moving culture and business.</strong></h1>
-    <div class="hero__photo" aria-hidden="true">
-      <img id="hero-img" alt="" src="images/walter_hero_image.webp" />
-    </div>
+    <div class="hero__photo" aria-hidden="true"></div>
   </section>
 
   <!-- ================= WORK / CAROUSEL ================= -->
