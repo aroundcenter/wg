@@ -57,7 +57,7 @@
   --hero-min-h:   clamp(421px, calc(421px + 292 * (100vw - 390px) / 1050), 713px);
   --hero-h1:      clamp(29px, calc(29px + 25 * (100vw - 390px) / 1050), 54px);
   --hero-h1-w:    clamp(215px, calc(215px + 405 * (100vw - 390px) / 1050), 620px);
-  --hero-photo-w: clamp(140px, calc(140px + 530 * (100vw - 390px) / 1050), 670px);
+  --hero-photo-w: clamp(170px, calc(170px + 500 * (100vw - 390px) / 1050), 670px);
   --hero-photo-h: clamp(421px, calc(421px + 434 * (100vw - 390px) / 1050), 855px);
   --h1:        clamp(31px, calc(31px + 30 * (100vw - 390px) / 1050), 61px);
   --about-h:   clamp(25px, calc(25px + 14 * (100vw - 390px) / 1050), 39px);
@@ -262,9 +262,14 @@ html.modal-open body{ padding-top:var(--nav-h); }
    natural reflow at these column widths doesn't reliably land on the
    same breaks as Figma's text engine. .hero-break is mobile-only
    (enabled in the max-width:719px query below); .hero-break-desktop
-   is the reverse, switched off there. */
+   is the reverse, switched off there. nowrap on each desktop segment
+   (spanning its own hidden-at-desktop hero-break tags) guarantees it
+   never wraps a second time internally regardless of font metrics —
+   <br> still forces a break within it at mobile width, where nowrap is
+   switched back off so mobile's own wrapping is unaffected. */
 .hero-break{ display:none; }
 .hero-break-desktop{ display:inline; }
+.hero-nowrap-desktop{ white-space:nowrap; }
 .hero__photo{
   position:absolute; z-index:0;
   top:0; right:0;
@@ -275,37 +280,15 @@ html.modal-open body{ padding-top:var(--nav-h); }
   background-size:cover;
   background-position:left 8%;
 }
-/* Below the desktop side-by-side layout, the photo is a full-bleed
-   background layer instead of a separate right-hand panel — the exact
-   left/width/height percentages from the Figma mobile frame, so the
-   image itself (not this element's box) carries the crop, leaving the
-   untouched left portion of the frame showing plain white behind the
-   heading. */
+/* One crop, one technique, at every width — two different treatments
+   (a full-bleed mobile layer vs. this panel) used to switch over at
+   719px, which made the photo visibly jump in scale/composition right
+   at that boundary. */
 @media (max-width:719px){
   .hero h1{ max-width:232px; }
   .hero-break{ display:inline; }
   .hero-break-desktop{ display:none; }
-  .hero__photo{
-    inset:0; width:auto; height:auto;
-    background-image:none;
-  }
-  /* width in vw (not %) plus aspect-ratio, rather than width/height as
-     two independent percentages of the box — the box's own aspect
-     ratio drifts as its height (fluid --hero-min-h) and width (the
-     viewport) grow at different rates across this breakpoint's range,
-     which stretched the image out of proportion as it widened toward
-     719px. Deriving height from width via aspect-ratio keeps the photo
-     itself always at its true proportions, matching the Figma crop
-     exactly at 390px and scaling correctly beyond it. */
-  .hero__photo::before{
-    content:"";
-    position:absolute; top:0; left:45.2%;
-    width:113.45vw;
-    aspect-ratio:3000/3424;
-    background-image:url('images/walter_hero_image.webp');
-    background-repeat:no-repeat;
-    background-size:100% 100%;
-  }
+  .hero-nowrap-desktop{ white-space:normal; }
 }
 
 /* ============================================================
@@ -879,7 +862,7 @@ html.modal-open body{ overflow:hidden; }
 
   <!-- ================= HERO ================= -->
   <section class="hero" data-node-id="41:1859">
-    <h1><strong>Creative leader,<br class="hero-break"> inventor,<br class="hero-break-desktop"> and<br class="hero-break"> entrepreneur,</strong><br class="hero-break"> building<br class="hero-break-desktop"> brands,<br class="hero-break"> experiences,<br class="hero-break"> and<br class="hero-break-desktop"> ideas<br class="hero-break"> <strong>moving<br class="hero-break"> culture<br class="hero-break-desktop"> and<br class="hero-break"> business.</strong></h1>
+    <h1><span class="hero-nowrap-desktop"><strong>Creative leader,<br class="hero-break"> inventor,</strong></span><br class="hero-break-desktop"><span class="hero-nowrap-desktop"> <strong>and<br class="hero-break"> entrepreneur,</strong><br class="hero-break"> building</span><br class="hero-break-desktop"><span class="hero-nowrap-desktop"> brands,<br class="hero-break"> experiences,<br class="hero-break"> and</span><br class="hero-break-desktop"><span class="hero-nowrap-desktop"> ideas<br class="hero-break"> <strong>moving<br class="hero-break"> culture</strong></span><br class="hero-break-desktop"><span class="hero-nowrap-desktop"><strong> and<br class="hero-break"> business.</strong></span></h1>
     <div class="hero__photo" aria-hidden="true"></div>
   </section>
 
