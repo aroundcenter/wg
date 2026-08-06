@@ -258,6 +258,10 @@ html.modal-open body{ padding-top:var(--nav-h); }
   text-wrap:pretty;
 }
 .hero h1 strong{ font-weight:900; }
+/* Forced only below 719px (see media query) to reproduce the Figma
+   mobile frame's exact line breaks — natural reflow at 232px doesn't
+   reliably land on the same rag as Figma's own text engine. */
+.hero-break{ display:none; }
 .hero__photo{
   position:absolute; z-index:0;
   top:0; right:0;
@@ -276,6 +280,7 @@ html.modal-open body{ padding-top:var(--nav-h); }
    heading. */
 @media (max-width:719px){
   .hero h1{ max-width:232px; }
+  .hero-break{ display:inline; }
   .hero__photo{
     inset:0; width:auto; height:auto;
     background-image:none;
@@ -861,7 +866,7 @@ html.modal-open body{ overflow:hidden; }
 
   <!-- ================= HERO ================= -->
   <section class="hero" data-node-id="41:1859">
-    <h1><strong>Creative leader, inventor, and entrepreneur,</strong> building brands, experiences, and ideas <strong>moving culture and business.</strong></h1>
+    <h1><strong>Creative leader,<br class="hero-break"> inventor, and<br class="hero-break"> entrepreneur,</strong><br class="hero-break"> building brands,<br class="hero-break"> experiences,<br class="hero-break"> and ideas<br class="hero-break"> <strong>moving<br class="hero-break"> culture and<br class="hero-break"> business.</strong></h1>
     <div class="hero__photo" aria-hidden="true"></div>
   </section>
 
