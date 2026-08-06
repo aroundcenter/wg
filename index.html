@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Walter Geer III — Creative leader, inventor and entrepreneur</title>
-<meta name="description" content="Creative leader, inventor and entrepreneur building brands, experiences and ideas that move culture and business." />
+<meta name="description" content="Creative leader, inventor, and entrepreneur, building brands, experiences, and ideas moving culture and business." />
 
 <!-- Runs before the page paints so an already-unlocked visitor never
      sees a flash of the password gate. -->
@@ -34,6 +34,7 @@
   --ink:        #1a1a17;
   --muted:      #595959;
   --paper:      #ffffff;
+  --page-bg:    #f5f5f5;
   --card-base:  #e0dfd8;
   --rule:       #d9d9d9;
 
@@ -50,16 +51,16 @@
   --nav-h:     75px;
   --nav-py:    clamp(12px, calc(12px + 16 * (100vw - 390px) / 1050), 28px);
   --identity:  clamp(16px, calc(16px +  2 * (100vw - 390px) / 1050), 18px);
-  --lockup-pt: clamp(64px, calc(64px + 66 * (100vw - 390px) / 1050), 130px);
+  /* Hero: heading top-left, photo panel anchored top-right, per the
+     redesigned Figma frames (mobile 390 / desktop 1440). */
+  --hero-pt:      clamp(40px, calc(40px + 110 * (100vw - 390px) / 1050), 150px);
+  --hero-min-h:   clamp(421px, calc(421px + 292 * (100vw - 390px) / 1050), 713px);
+  --hero-h1:      clamp(29px, calc(29px + 25 * (100vw - 390px) / 1050), 54px);
+  --hero-h1-w:    clamp(232px, calc(232px + 388 * (100vw - 390px) / 1050), 620px);
+  --hero-photo-w: clamp(232px, calc(232px + 438 * (100vw - 390px) / 1050), 670px);
+  --hero-photo-h: clamp(421px, calc(421px + 434 * (100vw - 390px) / 1050), 855px);
   --h1:        clamp(31px, calc(31px + 30 * (100vw - 390px) / 1050), 61px);
-  --hero-h:    clamp(649px,calc(649px + 206 * (100vw - 390px) / 1050), 855px);
-  --hero-gap:  clamp(8px, calc(8px + 8 * (100vw - 390px) / 1050), 16px);
-  /* The photo is drawn at its natural aspect and offset, exactly as the two
-     artboards do it: 1217.4px wide @390 and 1440px wide @1440, then full-bleed.
-     Reproduces Figma's -74.6/-150.5 desktop and -290.2/-170 mobile offsets. */
-  --hero-w:    max(100vw, clamp(1217.4px, calc(1217.4px + 222.6 * (100vw - 390px) / 1050), 1440px));
-  --hero-x:    min(calc(-0.0518 * 100vw), clamp(-290.2px, calc(-290.2px + 215.6 * (100vw - 390px) / 1050), -74.6px));
-  --hero-y:    min(calc(-0.10452 * 100vw), clamp(-170px, calc(-170px + 19.5 * (100vw - 390px) / 1050), -150.5px));
+  --about-h:   clamp(25px, calc(25px + 14 * (100vw - 390px) / 1050), 39px);
   --about-fs:  clamp(16px, calc(16px +  4 * (100vw - 390px) / 1050), 20px);
   --about-gap: clamp(40px, calc(40px + 28 * (100vw - 390px) / 1050), 68px);
   --about-pt:  clamp(0px,  calc(       104 * (100vw - 390px) / 1050), 104px);
@@ -83,7 +84,7 @@
   /* carousel */
   --cw:       clamp(320px, calc(320px + 70 * (100vw - 390px) / 1050), 390px);
   --card-gap: clamp(20px, calc(20px + 20 * (100vw - 390px) / 1050), 40px);
-  --cards-py: 80px;
+  --cards-py: clamp(64px, calc(64px + 16 * (100vw - 390px) / 1050), 80px);
 
   /* card internals, held as exact ratios of the card width so that
      390px => desktop artboard and 320px => mobile artboard */
@@ -126,7 +127,7 @@ html,body{
 }
 body{
   margin:0;
-  background:var(--paper);
+  background:var(--page-bg);
   color:var(--ink);
   font-family:var(--font);
   font-weight:400;
@@ -234,39 +235,41 @@ html.modal-open body{ padding-top:var(--nav-h); }
 }
 
 /* ============================================================
-   5. LOCKUP
+   5-6. HERO
+   Heading top-left, photo panel anchored top-right — replaces the old
+   stacked lockup-then-full-bleed-photo layout.
    ============================================================ */
-.lockup{
-  padding:var(--lockup-pt) var(--gutter) 0 var(--gutter-2x);
+.hero{
+  position:relative;
+  min-height:var(--hero-min-h);
+  overflow:hidden;
+  background:#fff;
+  padding:var(--hero-pt) var(--gutter) 0;
 }
-.lockup h1{
+.hero h1{
+  position:relative; z-index:1;
   margin:0;
-  max-width:1010px;
-  font-size:var(--h1);
-  font-weight:900;
-  line-height:1.02;
+  max-width:var(--hero-h1-w);
+  font-size:var(--hero-h1);
+  font-weight:400;
+  line-height:1.1;
   letter-spacing:-0.02em;
   color:var(--ink);
   text-wrap:pretty;
 }
-
-/* ============================================================
-   6. HERO
-   ============================================================ */
-.hero{
-  position:relative;
-  /* the artboard heights up to 1440, then hold the 1440 aspect so the crop
-     never tightens on ultrawide and squeezes the figure */
-  height:max(var(--hero-h), calc(100vw * 855 / 1440));
-  margin-top:var(--hero-gap);      /* the h1 and the photo can never meet */
+.hero h1 strong{ font-weight:900; }
+.hero__photo{
+  position:absolute; z-index:0;
+  top:0; right:0;
+  width:var(--hero-photo-w);
+  height:var(--hero-photo-h);
   overflow:hidden;
-  background:#fff;
 }
-.hero__img{
-  position:absolute;
-  left:var(--hero-x); top:var(--hero-y);
-  width:var(--hero-w); height:auto;   /* height:auto keeps the aspect exact */
-  max-width:none;
+.hero__photo img{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  object-fit:cover;
+  object-position:50% 15%;
 }
 
 /* ============================================================
@@ -372,8 +375,6 @@ html.modal-open body{ padding-top:var(--nav-h); }
   width:100%;
   color:#fff;
 }
-/* Skippable Preroll sits on a light product still, so type flips to ink. */
-.card--light .card__bottom{ color:var(--ink); }
 .card__title{
   font-size:var(--c-title);
   font-weight:500;
@@ -407,15 +408,6 @@ html.modal-open body{ padding-top:var(--nav-h); }
       0 10px 24px -12px rgba(26,26,23,.30);
     z-index:2;
   }
-  /* Same shadow reads much heavier against this card's light background
-     than against the others' dark photography (simultaneous contrast) —
-     scaled down so it matches the rest at a glance. */
-  .card--light:hover,
-  .card--light:focus-visible{
-    box-shadow:
-      0 24px 56px -16px rgba(26,26,23,.22),
-      0 10px 24px -12px rgba(26,26,23,.14);
-  }
   .card:hover .card__cta{ transform:translate(2px,-2px); }
 }
 
@@ -429,15 +421,27 @@ html.modal-open body{ padding-top:var(--nav-h); }
   scroll-margin-top:calc(var(--nav-py) * 2 + 32px);
 }
 .about__body{
+  display:flex; flex-direction:column;
+  gap:32px;
   max-width:520px;
+}
+.about__lede{
+  margin:0;
+  font-size:var(--about-h);
+  font-weight:400;
+  line-height:1.1;
+  letter-spacing:-0.02em;
+  color:var(--ink);
+}
+.about__lede strong{ font-weight:900; }
+.about__copy{
   color:var(--muted);
   font-size:var(--about-fs);
   line-height:1.42;
   letter-spacing:-0.012em;
 }
-.about__body p + p{ margin-top:1.42em; }
-.about__body strong{ font-weight:600; }
-.about__body p:first-child{ font-weight:600; }
+.about__copy p + p{ margin-top:1.42em; }
+.about__copy strong{ font-weight:700; color:var(--ink); }
 
 .rule{
   width:100%; height:1px;
@@ -451,7 +455,7 @@ html.modal-open body{ padding-top:var(--nav-h); }
 .footer p{
   font-size:14px;
   letter-spacing:0.02em;
-  color:var(--muted);
+  color:var(--ink);
 }
 
 /* ============================================================
@@ -837,14 +841,12 @@ html.modal-open body{ overflow:hidden; }
 
 <main>
 
-  <!-- ================= LOCKUP ================= -->
-  <section class="lockup" data-node-id="1:1068">
-    <h1>Creative leader, inventor and entrepreneur building brands, experiences and ideas that move culture and business.</h1>
-  </section>
-
   <!-- ================= HERO ================= -->
-  <section class="hero" data-node-id="1:1072" aria-hidden="true">
-    <img class="hero__img" id="hero-img" alt="" src="images/hero.webp" />
+  <section class="hero" data-node-id="41:1859">
+    <h1><strong>Creative leader, inventor, and entrepreneur,</strong> building brands, experiences, and ideas <strong>moving culture and business.</strong></h1>
+    <div class="hero__photo" aria-hidden="true">
+      <img id="hero-img" alt="" src="images/walter_hero_image.webp" />
+    </div>
   </section>
 
   <!-- ================= WORK / CAROUSEL ================= -->
@@ -866,15 +868,15 @@ html.modal-open body{ overflow:hidden; }
           </span>
         </article>
 
-        <article class="card card--light" data-node-id="1:1177" data-project="skippable-preroll" role="button" tabindex="0" aria-haspopup="dialog">
-          <div class="card__media" aria-hidden="true"><img src="images/card-preroll.webp" alt="" /></div>
+        <article class="card" data-node-id="1:1177" data-project="skippable-preroll" role="button" tabindex="0" aria-haspopup="dialog">
+          <div class="card__media" aria-hidden="true"><img src="images/pour_to_pass4.webp" alt="" /></div>
           <span class="card__tag">Innovation &amp; Invention</span>
           <div class="card__bottom">
             <h3 class="card__title">Skippable Preroll</h3>
             <p class="card__desc">Turning an annoying advertising constraint into the most famous digital ad format.</p>
           </div>
           <span class="card__cta" aria-hidden="true">
-            <img alt="" data-fallback="cta-dark" src="data:image/svg+xml,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Cmask%20id%3D%22mask0_9_127%22%20style%3D%22mask-type%3Aalpha%22%20maskUnits%3D%22userSpaceOnUse%22%20x%3D%220%22%20y%3D%220%22%20width%3D%2220%22%20height%3D%2220%22%3E%0A%3Crect%20width%3D%2220%22%20height%3D%2220%22%20fill%3D%22%23D9D9D9%22%2F%3E%0A%3C%2Fmask%3E%0A%3Cg%20mask%3D%22url%28%23mask0_9_127%29%22%3E%0A%3Cpath%20d%3D%22M13.085%2010.8333H3.75V9.20833H13.085L8.81729%204.94063L9.97917%203.75L16.25%2010.0208L10.0208%2016.25L8.85896%2015.0594L13.085%2010.8333Z%22%20fill%3D%22%231a1a17%22%2F%3E%0A%3C%2Fg%3E%0A%3C%2Fsvg%3E" />
+            <img alt="" data-fallback="cta" src="data:image/svg+xml,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Cmask%20id%3D%22mask0_9_127%22%20style%3D%22mask-type%3Aalpha%22%20maskUnits%3D%22userSpaceOnUse%22%20x%3D%220%22%20y%3D%220%22%20width%3D%2220%22%20height%3D%2220%22%3E%0A%3Crect%20width%3D%2220%22%20height%3D%2220%22%20fill%3D%22%23D9D9D9%22%2F%3E%0A%3C%2Fmask%3E%0A%3Cg%20mask%3D%22url%28%23mask0_9_127%29%22%3E%0A%3Cpath%20d%3D%22M13.085%2010.8333H3.75V9.20833H13.085L8.81729%204.94063L9.97917%203.75L16.25%2010.0208L10.0208%2016.25L8.85896%2015.0594L13.085%2010.8333Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fg%3E%0A%3C%2Fsvg%3E" />
           </span>
         </article>
 
@@ -947,17 +949,19 @@ html.modal-open body{ overflow:hidden; }
     <h2 class="visually-hidden">About</h2>
 
     <div class="about__body">
-      <p>You’re not going to read the typical bio here.</p>
-      <p>I’m not going to tell you about all the awards I’ve won. I’m not even going to talk about where I’ve worked or the brands I’ve touched. You can find all of that on my résumé.</p>
-      <p>I’d rather tell you what moves me—and why I do what I do.</p>
-      <p>I care about people. Period.</p>
-      <p>Ad Age has called me an activist. I’m proud of that. Not because I’m interested in labels, but because I’ve never believed creativity should sit quietly on the sidelines.</p>
-      <p>I believe the best ideas can change how people see themselves, how brands show up in the world and what society believes is possible. That belief has led me from telling stories and building brands to inventing products, designing experiences and creating platforms that bring people together.</p>
-      <p>My work has always been rooted in people. Not one type of person, but people as a whole. People whose truths have been overlooked. People whose experiences have been misunderstood. People who deserve to see themselves represented with honesty, complexity and humanity.</p>
-      <p>The awards are meaningful. But they’ve never been the reason I do this.</p>
-      <p>I do it because creativity can create access. It can open doors, shift perspectives and give someone an opportunity they may never have imagined for themselves. Sometimes that happens through product innovation. Sometimes through technology. And sometimes simply by telling a powerful truth through a story that represents the many cultures and people who make up our world.</p>
-      <p>I’m a creative leader, an inventor and an entrepreneur. But I’m also a husband, a father and someone who cares deeply about the world we are leaving behind.</p>
-      <p>At the end of my life, I don’t want to be remembered only for the work I made or the awards I won. I want to be remembered for leaving the world better than I found it, and for creating opportunities for a multitude of people to do the same.</p>
+      <p class="about__lede">You’re <strong>not going to read</strong> the <strong>typical bio</strong> here.</p>
+      <div class="about__copy">
+        <p>I’m not going to tell you about all the awards I’ve won. I’m not even going to talk about where I’ve worked or the brands I’ve touched. You can find all of that on my résumé.</p>
+        <p>I’d rather tell you what moves me—and why I do what I do.</p>
+        <p><strong>I care about people. Period.</strong></p>
+        <p>Ad Age has called me an activist. I’m proud of that. Not because I’m interested in labels, but because I’ve never believed creativity should sit quietly on the sidelines.</p>
+        <p>I believe the best ideas can change how people see themselves, how brands show up in the world and what society believes is possible. That belief has led me from telling stories and building brands to inventing products, designing experiences and creating platforms that bring people together.</p>
+        <p>My work has always been rooted in people. Not one type of person, but people as a whole. People whose truths have been overlooked. People whose experiences have been misunderstood. People who deserve to see themselves represented with honesty, complexity and humanity.</p>
+        <p>The awards are meaningful. But they’ve never been the reason I do this.</p>
+        <p>I do it because creativity can create access. It can open doors, shift perspectives and give someone an opportunity they may never have imagined for themselves. Sometimes that happens through product innovation. Sometimes through technology. And sometimes simply by telling a powerful truth through a story that represents the many cultures and people who make up our world.</p>
+        <p>I’m a creative leader, an inventor and an entrepreneur. But I’m also a husband, a father and someone who cares deeply about the world we are leaving behind.</p>
+        <p>At the end of my life, I don’t want to be remembered only for the work I made or the awards I won. I want to be remembered for leaving the world better than I found it, and for creating opportunities for a multitude of people to do the same.</p>
+      </div>
     </div>
 
     <hr class="rule" />
