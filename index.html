@@ -258,10 +258,13 @@ html.modal-open body{ padding-top:var(--nav-h); }
   text-wrap:pretty;
 }
 .hero h1 strong{ font-weight:900; }
-/* Forced only below 719px (see media query) to reproduce the Figma
-   mobile frame's exact line breaks — natural reflow at 232px doesn't
-   reliably land on the same rag as Figma's own text engine. */
+/* Forced line breaks reproducing each Figma frame's own rag exactly —
+   natural reflow at these column widths doesn't reliably land on the
+   same breaks as Figma's text engine. .hero-break is mobile-only
+   (enabled in the max-width:719px query below); .hero-break-desktop
+   is the reverse, switched off there. */
 .hero-break{ display:none; }
+.hero-break-desktop{ display:inline; }
 .hero__photo{
   position:absolute; z-index:0;
   top:0; right:0;
@@ -281,14 +284,24 @@ html.modal-open body{ padding-top:var(--nav-h); }
 @media (max-width:719px){
   .hero h1{ max-width:232px; }
   .hero-break{ display:inline; }
+  .hero-break-desktop{ display:none; }
   .hero__photo{
     inset:0; width:auto; height:auto;
     background-image:none;
   }
+  /* width in vw (not %) plus aspect-ratio, rather than width/height as
+     two independent percentages of the box — the box's own aspect
+     ratio drifts as its height (fluid --hero-min-h) and width (the
+     viewport) grow at different rates across this breakpoint's range,
+     which stretched the image out of proportion as it widened toward
+     719px. Deriving height from width via aspect-ratio keeps the photo
+     itself always at its true proportions, matching the Figma crop
+     exactly at 390px and scaling correctly beyond it. */
   .hero__photo::before{
     content:"";
     position:absolute; top:0; left:45.2%;
-    width:113.45%; height:119.95%;
+    width:113.45vw;
+    aspect-ratio:3000/3424;
     background-image:url('images/walter_hero_image.webp');
     background-repeat:no-repeat;
     background-size:100% 100%;
@@ -866,7 +879,7 @@ html.modal-open body{ overflow:hidden; }
 
   <!-- ================= HERO ================= -->
   <section class="hero" data-node-id="41:1859">
-    <h1><strong>Creative leader,<br class="hero-break"> inventor, and<br class="hero-break"> entrepreneur,</strong><br class="hero-break"> building brands,<br class="hero-break"> experiences,<br class="hero-break"> and ideas<br class="hero-break"> <strong>moving<br class="hero-break"> culture and<br class="hero-break"> business.</strong></h1>
+    <h1><strong>Creative leader,<br class="hero-break"> inventor,<br class="hero-break-desktop"> and<br class="hero-break"> entrepreneur,</strong><br class="hero-break"> building<br class="hero-break-desktop"> brands,<br class="hero-break"> experiences,<br class="hero-break"> and<br class="hero-break-desktop"> ideas<br class="hero-break"> <strong>moving<br class="hero-break"> culture<br class="hero-break-desktop"> and<br class="hero-break"> business.</strong></h1>
     <div class="hero__photo" aria-hidden="true"></div>
   </section>
 
