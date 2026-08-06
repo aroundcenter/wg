@@ -268,6 +268,27 @@ html.modal-open body{ padding-top:var(--nav-h); }
   background-size:cover;
   background-position:left 8%;
 }
+/* Below the desktop side-by-side layout, the photo is a full-bleed
+   background layer instead of a separate right-hand panel — the exact
+   left/width/height percentages from the Figma mobile frame, so the
+   image itself (not this element's box) carries the crop, leaving the
+   untouched left portion of the frame showing plain white behind the
+   heading. */
+@media (max-width:719px){
+  .hero h1{ max-width:232px; }
+  .hero__photo{
+    inset:0; width:auto; height:auto;
+    background-image:none;
+  }
+  .hero__photo::before{
+    content:"";
+    position:absolute; top:0; left:45.2%;
+    width:113.45%; height:119.95%;
+    background-image:url('images/walter_hero_image.webp');
+    background-repeat:no-repeat;
+    background-size:100% 100%;
+  }
+}
 
 /* ============================================================
    7. CAROUSEL
