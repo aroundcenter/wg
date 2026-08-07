@@ -757,6 +757,11 @@ html.modal-open body{ overflow:hidden; }
   color:var(--ink);
   text-wrap:balance;
 }
+/* Forced break for the Alzheimer's modal title only, so "and Meta"
+   drops to its own line on desktop, where the title otherwise fits
+   on one line and text-wrap:balance never gets a chance to act. */
+.modal-title-break-desktop{ display:none; }
+@media (min-width:720px){ .modal-title-break-desktop{ display:block; } }
 
 .modal__hero{
   padding:var(--modal-hero-py) var(--gutter);
@@ -1650,6 +1655,7 @@ html.modal-open body{ overflow:hidden; }
     },
     "alzheimers-association": {
       client: "Alzheimer’s Association and Meta",
+      titleHTML: "Alzheimer’s Association<br class=\"modal-title-break-desktop\"> and Meta",
       video: '<iframe src="https://player.vimeo.com/video/1214351489?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="ReCognition_Meta"></iframe>',
       details: [
         { h: "Experience Design", dek: "Re:Cognition",
@@ -2015,7 +2021,8 @@ html.modal-open body{ overflow:hidden; }
     var desc  = card ? card.querySelector(".card__desc") : null;
     var img   = card ? card.querySelector(".card__media img") : null;
 
-    titleEl.textContent = data ? data.client : (title ? title.textContent : "");
+    if (data && data.titleHTML) titleEl.innerHTML = data.titleHTML;
+    else titleEl.textContent = data ? data.client : (title ? title.textContent : "");
     modalEl.classList.toggle("modal--approach", slug === "approach");
 
     var videos = data && data.video ? (Array.isArray(data.video) ? data.video : [data.video]) : null;
