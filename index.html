@@ -328,12 +328,14 @@ html.modal-open body{ padding-top:var(--nav-h); }
 }
 /* Each desktop nowrap segment was sized to fit inside the widest
    heading box (1440px's 640px), but --hero-h1-w narrows faster than
-   the segments themselves shrink between 720-900px — forcing them to
+   the segments themselves shrink between 720-999px — forcing them to
    stay on one line there just pushes them past the box edge and into
    the photo. Segment-level breaks (hero-break-desktop) stay forced;
    only the no-internal-wrap constraint is relaxed in this zone, so a
-   segment can drop to a second line instead of overflowing. */
-@media (min-width:720px) and (max-width:899px){
+   segment can drop to a second line instead of overflowing. By
+   1000px the box has grown enough for every segment to fit on its
+   own line again without relaxing nowrap. */
+@media (min-width:720px) and (max-width:999px){
   .hero-nowrap-desktop{ white-space:normal; }
 }
 
