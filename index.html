@@ -84,7 +84,7 @@
   --detail-h:       clamp(24px, calc(24px +  7 * (100vw - 390px) / 1050), 31px);
   --detail-sub:     clamp(18px, calc(18px +  7 * (100vw - 390px) / 1050), 25px);
   --detail-body:    clamp(15px, calc(15px +  3 * (100vw - 390px) / 1050), 18px);
-  --detail-gap:     clamp(96px, calc(96px + 32 * (100vw - 390px) / 1050), 128px);
+  --detail-gap:     clamp(80px, calc(80px + 32 * (100vw - 390px) / 1050), 112px);
 
   /* carousel */
   --cw:       clamp(320px, calc(320px + 70 * (100vw - 390px) / 1050), 390px);
@@ -840,7 +840,12 @@ html.modal-open body{ overflow:hidden; }
   color:#a88a5b;
   line-height:1.42;
 }
-.modal-block__dek--tight{ line-height:1.1; }
+/* Tightening line-height also shrinks the leading space above the dek's
+   own first line, which is the only thing holding it the usual distance
+   below its heading (the flex gap between them is 0, above). Restore
+   that lost half-leading with margin-top so the head-to-dek gap still
+   matches every other dek, while the wrapped lines themselves stay tight. */
+.modal-block__dek--tight{ line-height:1.1; margin-top:calc(var(--detail-sub) * 0.16); }
 .modal-block__p{
   font-size:var(--detail-body);
   font-weight:400;
