@@ -137,16 +137,17 @@
 @media (max-width:479px){ :root{ --hero-photo-w: clamp(170px, calc(170px + 99 * (100vw - 390px) / 90), 269px); } }
 @media (min-width:480px) and (max-width:599px){ :root{ --hero-photo-w: clamp(269px, calc(269px + 86 * (100vw - 480px) / 120), 355px); } }
 @media (min-width:600px) and (max-width:719px){ :root{ --hero-photo-w: clamp(355px, calc(355px + 61 * (100vw - 600px) / 120), 416px); } }
-@media (min-width:720px) and (max-width:899px){ :root{ --hero-photo-w: clamp(413px, calc(416px - 3 * (100vw - 720px) / 180), 416px); } }
-@media (min-width:900px) and (max-width:1199px){ :root{ --hero-photo-w: clamp(413px, calc(413px + 143 * (100vw - 900px) / 300), 556px); } }
+@media (min-width:720px) and (max-width:899px){ :root{ --hero-photo-w: clamp(416px, calc(416px + 107 * (100vw - 720px) / 180), 523px); } }
+@media (min-width:900px) and (max-width:1199px){ :root{ --hero-photo-w: clamp(523px, calc(523px + 33 * (100vw - 900px) / 300), 556px); } }
 @media (min-width:1200px) and (max-width:1439px){ :root{ --hero-photo-w: clamp(556px, calc(556px + 114 * (100vw - 1200px) / 240), 670px); } }
 @media (min-width:1440px){ :root{ --hero-photo-w: 670px; } }
 
 @media (max-width:479px){ :root{ --hero-photo-x: clamp(5%, calc(5% + 1 * (100vw - 390px) / 90), 6%); } }
 @media (min-width:480px) and (max-width:599px){ :root{ --hero-photo-x: clamp(0%, calc(6% - 6 * (100vw - 480px) / 120), 6%); } }
 @media (min-width:600px) and (max-width:719px){ :root{ --hero-photo-x: clamp(0%, calc(0% + 33 * (100vw - 600px) / 120), 33%); } }
-@media (min-width:720px) and (max-width:899px){ :root{ --hero-photo-x: clamp(0%, calc(33% - 33 * (100vw - 720px) / 180), 33%); } }
-@media (min-width:900px){ :root{ --hero-photo-x: 0%; } }
+@media (min-width:720px) and (max-width:899px){ :root{ --hero-photo-x: clamp(33%, calc(33% + 11 * (100vw - 720px) / 180), 44%); } }
+@media (min-width:900px) and (max-width:1199px){ :root{ --hero-photo-x: clamp(0%, calc(44% - 44 * (100vw - 900px) / 300), 44%); } }
+@media (min-width:1200px){ :root{ --hero-photo-x: 0%; } }
 
 /* ============================================================
    3. BASE
@@ -323,6 +324,16 @@ html.modal-open body{ padding-top:var(--nav-h); }
 @media (max-width:719px){
   .hero-break{ display:inline; }
   .hero-break-desktop{ display:none; }
+  .hero-nowrap-desktop{ white-space:normal; }
+}
+/* Each desktop nowrap segment was sized to fit inside the widest
+   heading box (1440px's 640px), but --hero-h1-w narrows faster than
+   the segments themselves shrink between 720-900px — forcing them to
+   stay on one line there just pushes them past the box edge and into
+   the photo. Segment-level breaks (hero-break-desktop) stay forced;
+   only the no-internal-wrap constraint is relaxed in this zone, so a
+   segment can drop to a second line instead of overflowing. */
+@media (min-width:720px) and (max-width:899px){
   .hero-nowrap-desktop{ white-space:normal; }
 }
 
