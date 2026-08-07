@@ -326,17 +326,18 @@ html.modal-open body{ padding-top:var(--nav-h); }
   .hero-break-desktop{ display:none; }
   .hero-nowrap-desktop{ white-space:normal; }
 }
-/* Each desktop nowrap segment was sized to fit inside the widest
-   heading box (1440px's 640px), but --hero-h1-w narrows faster than
-   the segments themselves shrink between 720-999px — forcing them to
-   stay on one line there just pushes them past the box edge and into
-   the photo. Segment-level breaks (hero-break-desktop) stay forced;
-   only the no-internal-wrap constraint is relaxed in this zone, so a
-   segment can drop to a second line instead of overflowing. By
-   1000px the box has grown enough for every segment to fit on its
-   own line again without relaxing nowrap. */
+/* A third, dedicated rag for 720-999px. hero-rag-default's desktop
+   nowrap segments were sized to fit the 1440px heading box (640px)
+   and don't have room in this narrower one (--hero-h1-w bottoms out
+   at 308-489px here) — forcing them onto one line pushed text past
+   its box and into the photo. hero-rag-mid is its own fixed break
+   pattern tuned for this range specifically, matching how mobile and
+   wide-desktop already each get their own fixed markup rather than
+   reusing one another's. */
+.hero-rag-mid{ display:none; }
 @media (min-width:720px) and (max-width:999px){
-  .hero-nowrap-desktop{ white-space:normal; }
+  .hero-rag-default{ display:none; }
+  .hero-rag-mid{ display:block; }
 }
 
 /* ============================================================
@@ -923,7 +924,7 @@ html.modal-open body{ overflow:hidden; }
 
   <!-- ================= HERO ================= -->
   <section class="hero" data-node-id="41:1859">
-    <h1><span class="hero-nowrap-desktop"><strong>Creative leader,<br class="hero-break"> inventor,</strong></span><br class="hero-break-desktop"><span class="hero-nowrap-desktop"> <strong>and<br class="hero-break"> entrepreneur,</strong><br class="hero-break"> building</span><br class="hero-break-desktop"><span class="hero-nowrap-desktop"> brands,<br class="hero-break"> experiences,<br class="hero-break"> and</span><br class="hero-break-desktop"><span class="hero-nowrap-desktop"> ideas<br class="hero-break"> <strong>moving<br class="hero-break"> culture</strong></span><br class="hero-break-desktop"><span class="hero-nowrap-desktop"><strong> and<br class="hero-break"> business.</strong></span></h1>
+    <h1><span class="hero-rag-default"><span class="hero-nowrap-desktop"><strong>Creative leader,<br class="hero-break"> inventor,</strong></span><br class="hero-break-desktop"><span class="hero-nowrap-desktop"> <strong>and<br class="hero-break"> entrepreneur,</strong><br class="hero-break"> building</span><br class="hero-break-desktop"><span class="hero-nowrap-desktop"> brands,<br class="hero-break"> experiences,<br class="hero-break"> and</span><br class="hero-break-desktop"><span class="hero-nowrap-desktop"> ideas<br class="hero-break"> <strong>moving<br class="hero-break"> culture</strong></span><br class="hero-break-desktop"><span class="hero-nowrap-desktop"><strong> and<br class="hero-break"> business.</strong></span></span><span class="hero-rag-mid"><strong>Creative leader,<br> inventor, and<br> entrepreneur,</strong><br> building brands,<br> experiences, and<br> ideas <strong>moving<br> culture and<br> business.</strong></span></h1>
     <div class="hero__photo" aria-hidden="true"></div>
   </section>
 
