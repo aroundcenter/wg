@@ -610,21 +610,16 @@ html:not(.unlocked) body{ overflow:hidden; }
 
 #pw-gate{
   position:fixed; inset:0; z-index:1000;
-  display:flex; align-items:center; justify-content:center;
+  display:flex; align-items:flex-end; justify-content:center;
   padding:24px;
-  background:var(--paper);
+  background:transparent;
 }
 .pw-gate__box{
   width:100%; max-width:340px;
-}
-.pw-gate__image{
-  display:block;
-  width:100%;
-  aspect-ratio:1/1;
-  object-fit:cover;
-  object-position:50% 15%;
+  background:var(--paper);
+  padding:24px;
   border-radius:16px;
-  margin-bottom:20px;
+  box-shadow:0 24px 56px -16px rgba(26,26,23,.35), 0 10px 24px -12px rgba(26,26,23,.2);
 }
 .pw-gate__label{
   display:block;
@@ -895,7 +890,6 @@ html.modal-open body{ overflow:hidden; }
 <!-- ================= PASSWORD GATE ================= -->
 <div id="pw-gate">
   <form class="pw-gate__box" id="pw-gate-form" autocomplete="off">
-    <img class="pw-gate__image" src="images/walter_hero_image.webp" alt="" />
     <label class="pw-gate__label" for="pw-gate-input">This site is password protected.</label>
     <div class="pw-gate__row">
       <input class="pw-gate__input" id="pw-gate-input" name="password" type="password" placeholder="Password" required autofocus />
