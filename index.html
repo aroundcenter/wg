@@ -629,14 +629,29 @@ html:not(.unlocked) .approach-btn{ display:none; }
   padding:16px;
   border-radius:16px;
   box-shadow:0 24px 56px -16px rgba(26,26,23,.45), 0 10px 24px -12px rgba(26,26,23,.30);
+  container-type:inline-size;
 }
+/* The photo filling the viewport height (see the sizeHeroPhotoFull
+   script) can leave the panel very little width on some desktop
+   viewports -- stack the field above the button instead of squeezing
+   both onto one row once there isn't room for both comfortably. */
+@container (max-width:220px){
+  .pw-gate__row{ flex-direction:column; }
+  .pw-gate__submit{ width:100%; }
+}
+/* Desktop side-panel treatment: photo pinned right, panel centered in
+   the space to its left. Below a width where filling the viewport
+   height would leave that space too narrow to be usable, the script
+   switches to .pw-gate--overlay instead (full-bleed photo, panel
+   floating on top, same as the mobile treatment) rather than
+   squeezing the panel down to nothing. */
 @media (min-width:720px){
-  #pw-gate{
+  #pw-gate:not(.pw-gate--overlay){
     display:flex; align-items:center; justify-content:center;
     padding-left:24px;
     padding-right:calc(var(--hero-photo-w) + 24px);
   }
-  .pw-gate__box{
+  #pw-gate:not(.pw-gate--overlay) .pw-gate__box{
     position:static;
     transform:none;
     width:100%;
@@ -1144,7 +1159,19 @@ html.modal-open body{ overflow:hidden; }
        the shorter height the unlocked design calls for. Uniform
        scaling keeps the same crop framing background-size:cover was
        already using -- just bigger -- rather than stretching height
-       alone, which would force cover to zoom in and clip the sides. */
+       alone, which would force cover to zoom in and clip the sides.
+
+       Below a width where that scaled-up photo would leave the panel's
+       region too narrow to read comfortably (this happens on
+       in-between desktop widths, since the design's natural photo is
+       relatively narrow there and needs a big scale-up to reach a
+       typical viewport height), fall back to a full-bleed photo with
+       the panel floating on top instead -- the same treatment mobile
+       already uses -- rather than squeezing the side panel further.
+       200px is roughly the narrowest the panel can render at (stacked,
+       via the container query below) before "Enter password" itself
+       stops fitting on one line. */
+    var MIN_PANEL_REGION = 200;
     var heroPhoto = document.querySelector(".hero__photo");
     function sizeHeroPhotoFull(){
       if (!heroPhoto) return;
@@ -1154,26 +1181,29 @@ html.modal-open body{ overflow:hidden; }
       // the CSS-computed natural size, not our own last inline style.
       heroPhoto.style.width  = "";
       heroPhoto.style.height = "";
-      if (gateEl) gateEl.style.paddingRight = "";
+      if (gateEl){
+        gateEl.style.paddingRight = "";
+        gateEl.classList.remove("pw-gate--overlay");
+      }
       if (!locked || window.innerWidth < 720) return;
 
-      var rect    = heroPhoto.getBoundingClientRect();
+      var vh = window.innerHeight;
+      var rect     = heroPhoto.getBoundingClientRect();
       var naturalW = rect.width;
       var naturalH = rect.height;
       if (!naturalW || !naturalH) return;
-      var vh    = window.innerHeight;
-      var scale = vh / naturalH;
-      var newW  = naturalW * scale;
-      // Keep a usable floor for the panel's region so an aggressive
-      // upscale (e.g. a squarish, unusually tall viewport) can't
-      // squeeze the password field down to nothing -- cap the photo's
-      // growth, uniformly, rather than letting it crowd the panel out.
-      var maxW = window.innerWidth - 300;
-      if (newW > maxW) newW = Math.max(maxW, naturalW);
-      var newH = naturalH * (newW / naturalW);
-      heroPhoto.style.height = newH + "px";
-      heroPhoto.style.width  = newW + "px";
-      if (gateEl) gateEl.style.paddingRight = (newW + 24) + "px";
+      var desiredW = naturalW * (vh / naturalH);
+      var region   = window.innerWidth - desiredW - 48;
+
+      if (region >= MIN_PANEL_REGION){
+        heroPhoto.style.height = vh + "px";
+        heroPhoto.style.width  = desiredW + "px";
+        if (gateEl) gateEl.style.paddingRight = (desiredW + 24) + "px";
+      } else {
+        if (gateEl) gateEl.classList.add("pw-gate--overlay");
+        heroPhoto.style.height = vh + "px";
+        heroPhoto.style.width  = "100%";
+      }
     }
     sizeHeroPhotoFull();
     window.addEventListener("resize", sizeHeroPhotoFull);
