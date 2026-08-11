@@ -306,8 +306,13 @@ html.modal-open body{ padding-top:var(--nav-h); }
 @media (max-width:719px){
   .hero{
     display:flex; flex-direction:column;
-    height:100vh; height:100dvh;
-    min-height:100vh; min-height:100dvh;
+    /* svh (small viewport height) rather than dvh: dvh recalculates as
+       Safari's address bar collapses/expands on scroll, which visibly
+       resized the whole section (and the photo with it) mid-scroll.
+       svh is the fixed "chrome fully shown" height, so the section
+       never changes size once painted. */
+    height:100vh; height:100svh;
+    min-height:100vh; min-height:100svh;
     padding:0;
   }
   .hero h1{
@@ -318,7 +323,12 @@ html.modal-open body{ padding-top:var(--nav-h); }
     position:static;
     flex:1 1 auto; min-height:0;
     width:100%; height:auto;
-    background-position:50% center;
+    /* center-cropping vertically was cutting into the top of his head
+       when the flex-allotted box was short relative to the source
+       photo — bias toward the top, same as the desktop crop, so the
+       face and hair stay fully in frame and legs/torso absorb the
+       crop instead. */
+    background-position:50% 8%;
   }
 }
 
