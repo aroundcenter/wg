@@ -130,8 +130,8 @@
 @media (min-width:600px) and (max-width:719px){ :root{ --hero-photo-w: clamp(355px, calc(355px + 61 * (100vw - 600px) / 120), 416px); } }
 @media (min-width:720px) and (max-width:899px){ :root{ --hero-photo-w: clamp(416px, calc(416px + 107 * (100vw - 720px) / 180), 523px); } }
 @media (min-width:900px) and (max-width:1199px){ :root{ --hero-photo-w: clamp(523px, calc(523px + 33 * (100vw - 900px) / 300), 556px); } }
-@media (min-width:1200px) and (max-width:1439px){ :root{ --hero-photo-w: clamp(556px, calc(556px + 114 * (100vw - 1200px) / 240), 670px); } }
-@media (min-width:1440px){ :root{ --hero-photo-w: 670px; } }
+@media (min-width:1200px) and (max-width:1439px){ :root{ --hero-photo-w: clamp(556px, calc(556px + 314 * (100vw - 1200px) / 240), 870px); } }
+@media (min-width:1440px){ :root{ --hero-photo-w: 870px; } }
 
 @media (max-width:479px){ :root{ --hero-photo-x: clamp(5%, calc(5% + 1 * (100vw - 390px) / 90), 6%); } }
 @media (min-width:480px) and (max-width:599px){ :root{ --hero-photo-x: clamp(0%, calc(6% - 6 * (100vw - 480px) / 120), 6%); } }
@@ -269,7 +269,11 @@ html.modal-open body{ padding-top:var(--nav-h); }
    ============================================================ */
 .hero{
   position:relative;
-  min-height:var(--hero-min-h);
+  /* height (not just min-height) so a viewport shorter than the ideal
+     design height shrinks the whole section — and the photo with it,
+     via its own matching cap below — instead of the photo staying its
+     full intended height and getting clipped by overflow:hidden. */
+  height:var(--hero-min-h); height:min(var(--hero-min-h), 100vh); height:min(var(--hero-min-h), 100dvh);
   overflow:hidden;
   background:#fff;
   padding:var(--hero-pt) var(--gutter) 0;
@@ -278,7 +282,7 @@ html.modal-open body{ padding-top:var(--nav-h); }
   position:relative; z-index:1;
   margin:0;
   font-size:var(--hero-h1);
-  font-weight:900;
+  font-weight:700;
   line-height:1.1;
   letter-spacing:-0.02em;
   color:var(--ink);
@@ -287,7 +291,7 @@ html.modal-open body{ padding-top:var(--nav-h); }
   position:absolute; z-index:0;
   top:0; right:0;
   width:var(--hero-photo-w);
-  height:var(--hero-photo-h);
+  height:var(--hero-photo-h); height:min(var(--hero-photo-h), 100vh); height:min(var(--hero-photo-h), 100dvh);
   background-image:url('images/walter_hero_image.webp');
   background-repeat:no-repeat;
   background-size:cover;
