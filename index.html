@@ -401,13 +401,6 @@ html.modal-open body{ padding-top:var(--nav-h); }
   object-fit:cover;
   object-position:center;
 }
-/* Advil: a letterboxed still centered on black, per the source design. */
-.card--contain .card__media{ background:#000; }
-.card--contain .card__media img{
-  width:75.43%; height:71.18%;
-  left:12.29%; top:8.41%;
-  object-fit:contain;
-}
 /* Cards whose description runs a 3rd line (5–7) would otherwise push
    their title upward under justify-content:space-between, since the
    bottom block stays anchored to the card's bottom edge. Anchor the
@@ -965,8 +958,8 @@ html.modal-open body{ overflow:hidden; }
           </span>
         </article>
 
-        <article class="card card--contain" data-node-id="2:3" data-project="advil" role="button" tabindex="0" aria-haspopup="dialog">
-          <div class="card__media" aria-hidden="true"><img src="images/card-advil.webp" alt="" /></div>
+        <article class="card" data-node-id="2:3" data-project="advil" role="button" tabindex="0" aria-haspopup="dialog">
+          <div class="card__media" aria-hidden="true"><img src="images/advil_poster.webp" alt="" /></div>
           <span class="card__tag">Human Impact</span>
           <div class="card__bottom">
             <h3 class="card__title">Advil: Believe My Pain</h3>
