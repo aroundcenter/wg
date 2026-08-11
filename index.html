@@ -661,10 +661,11 @@ html:not(.unlocked) .hero h1{ display:none; }
 }
 .pw-gate__submit:hover{ opacity:.88; }
 .pw-gate__error{
-  margin-top:10px;
   font-size:14px;
   color:#b3261e;
-  min-height:1.2em;
+}
+.pw-gate__error:not(:empty){
+  margin-top:10px;
 }
 
 /* ============================================================
