@@ -626,9 +626,9 @@ html:not(.unlocked) .approach-btn{ display:none; }
   transform:translate(-50%, -50%);
   width:calc(100% - 48px); max-width:340px;
   background:var(--paper);
-  padding:24px;
+  padding:16px;
   border-radius:16px;
-  box-shadow:0 24px 56px -16px rgba(26,26,23,.35), 0 10px 24px -12px rgba(26,26,23,.2);
+  box-shadow:0 24px 56px -16px rgba(26,26,23,.45), 0 10px 24px -12px rgba(26,26,23,.30);
 }
 @media (min-width:720px){
   #pw-gate{
@@ -916,7 +916,7 @@ html.modal-open body{ overflow:hidden; }
     <label class="pw-gate__label visually-hidden" for="pw-gate-input">Enter password</label>
     <div class="pw-gate__row">
       <input class="pw-gate__input" id="pw-gate-input" name="password" type="password" placeholder="Enter password" required autofocus />
-      <button class="pw-gate__submit" type="submit">Enter</button>
+      <button class="pw-gate__submit" type="submit">Submit</button>
     </div>
     <p class="pw-gate__error" id="pw-gate-error" role="alert"></p>
   </form>
@@ -1139,9 +1139,50 @@ html.modal-open body{ overflow:hidden; }
 
     if (!gateForm) return;
 
+    /* Scales the hero photo (and the box it sits in) up uniformly so it
+       always fills the viewport height while locked, instead of using
+       the shorter height the unlocked design calls for. Uniform
+       scaling keeps the same crop framing background-size:cover was
+       already using -- just bigger -- rather than stretching height
+       alone, which would force cover to zoom in and clip the sides. */
+    var heroPhoto = document.querySelector(".hero__photo");
+    function sizeHeroPhotoFull(){
+      if (!heroPhoto) return;
+      var gateEl  = document.getElementById("pw-gate");
+      var locked  = !document.documentElement.classList.contains("unlocked");
+      // Clear any prior override first so the rect read below reflects
+      // the CSS-computed natural size, not our own last inline style.
+      heroPhoto.style.width  = "";
+      heroPhoto.style.height = "";
+      if (gateEl) gateEl.style.paddingRight = "";
+      if (!locked || window.innerWidth < 720) return;
+
+      var rect    = heroPhoto.getBoundingClientRect();
+      var naturalW = rect.width;
+      var naturalH = rect.height;
+      if (!naturalW || !naturalH) return;
+      var vh    = window.innerHeight;
+      var scale = vh / naturalH;
+      var newW  = naturalW * scale;
+      // Keep a usable floor for the panel's region so an aggressive
+      // upscale (e.g. a squarish, unusually tall viewport) can't
+      // squeeze the password field down to nothing -- cap the photo's
+      // growth, uniformly, rather than letting it crowd the panel out.
+      var maxW = window.innerWidth - 300;
+      if (newW > maxW) newW = Math.max(maxW, naturalW);
+      var newH = naturalH * (newW / naturalW);
+      heroPhoto.style.height = newH + "px";
+      heroPhoto.style.width  = newW + "px";
+      if (gateEl) gateEl.style.paddingRight = (newW + 24) + "px";
+    }
+    sizeHeroPhotoFull();
+    window.addEventListener("resize", sizeHeroPhotoFull);
+    window.addEventListener("orientationchange", sizeHeroPhotoFull);
+
     function unlock(){
       localStorage.setItem(STORAGE_KEY, "1");
       document.documentElement.classList.add("unlocked");
+      sizeHeroPhotoFull();
     }
 
     function sha256Hex(text){
