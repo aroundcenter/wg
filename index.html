@@ -1165,13 +1165,6 @@ html.modal-open body{ overflow:hidden; }
     document.body.appendChild(a);
     a.click();
     a.remove();
-
-    // let the person know if the file isn't there yet
-    if (window.fetch){
-      fetch(RESUME_URL, { method:"HEAD" })
-        .then(function(r){ if(!r.ok) throw 0; })
-        .catch(function(){ toast("Add your PDF at " + RESUME_URL); });
-    }
   }
 
   function copyEmail(){
