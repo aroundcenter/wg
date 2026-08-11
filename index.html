@@ -609,6 +609,13 @@ html.unlocked #pw-gate{ display:none; }
 html:not(.unlocked) body{ overflow:hidden; }
 html:not(.unlocked) .nav{ display:none; }
 html:not(.unlocked) .hero h1{ display:none; }
+html:not(.unlocked) .cards,
+html:not(.unlocked) .about,
+html:not(.unlocked) .approach-btn{ display:none; }
+@media (min-width:720px){
+  html:not(.unlocked) .hero{ height:100vh; height:100dvh; }
+  html:not(.unlocked) .hero__photo{ height:100vh; height:100dvh; }
+}
 
 #pw-gate{
   position:fixed; inset:0; z-index:1000;
