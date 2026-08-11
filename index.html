@@ -614,7 +614,6 @@ html:not(.unlocked) .about,
 html:not(.unlocked) .approach-btn{ display:none; }
 @media (min-width:720px){
   html:not(.unlocked) .hero{ height:100vh; height:100dvh; }
-  html:not(.unlocked) .hero__photo{ height:100vh; height:100dvh; }
 }
 
 #pw-gate{
@@ -632,11 +631,16 @@ html:not(.unlocked) .approach-btn{ display:none; }
   box-shadow:0 24px 56px -16px rgba(26,26,23,.35), 0 10px 24px -12px rgba(26,26,23,.2);
 }
 @media (min-width:720px){
+  #pw-gate{
+    display:flex; align-items:center; justify-content:center;
+    padding-left:24px;
+    padding-right:calc(var(--hero-photo-w) + 24px);
+  }
   .pw-gate__box{
-    left:var(--gutter);
-    top:50%;
-    transform:translateY(-50%);
-    max-width:min(340px, calc(100% - var(--hero-photo-w) - var(--gutter) - 24px));
+    position:static;
+    transform:none;
+    width:100%;
+    max-width:340px;
   }
 }
 .pw-gate__label{
@@ -909,9 +913,9 @@ html.modal-open body{ overflow:hidden; }
 <!-- ================= PASSWORD GATE ================= -->
 <div id="pw-gate">
   <form class="pw-gate__box" id="pw-gate-form" autocomplete="off">
-    <label class="pw-gate__label" for="pw-gate-input">This site is password protected.</label>
+    <label class="pw-gate__label visually-hidden" for="pw-gate-input">Enter password</label>
     <div class="pw-gate__row">
-      <input class="pw-gate__input" id="pw-gate-input" name="password" type="password" placeholder="Password" required autofocus />
+      <input class="pw-gate__input" id="pw-gate-input" name="password" type="password" placeholder="Enter password" required autofocus />
       <button class="pw-gate__submit" type="submit">Enter</button>
     </div>
     <p class="pw-gate__error" id="pw-gate-error" role="alert"></p>
