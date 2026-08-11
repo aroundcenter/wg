@@ -323,12 +323,14 @@ html.modal-open body{ padding-top:var(--nav-h); }
     position:static;
     flex:1 1 auto; min-height:0;
     width:100%; height:auto;
-    /* center-cropping vertically was cutting into the top of his head
-       when the flex-allotted box was short relative to the source
-       photo — bias toward the top, same as the desktop crop, so the
-       face and hair stay fully in frame and legs/torso absorb the
-       crop instead. */
-    background-position:50% 8%;
+    /* Matches the Figma mobile frame's crop exactly: percentage-based
+       background-size (rather than "cover") reproduces its specific
+       zoom level — cover's automatic minimum-fit came out noticeably
+       more zoomed in than the design — and 0% on the y-axis top-aligns
+       the image so the crop starts exactly where the photo area
+       begins, same as the Figma frame's own image offset. */
+    background-size:183.89% auto;
+    background-position:42.6% 0%;
   }
 }
 
